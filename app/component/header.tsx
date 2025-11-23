@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { VscAccount } from "react-icons/vsc";

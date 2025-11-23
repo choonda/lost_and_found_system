@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "../component/header";
+import Filter from "../component/filter";
 
 const page = () => {
   return (
@@ -7,7 +8,9 @@ const page = () => {
       <div>
         <Header />
       </div>
-      <div></div>
+      <div>
+        <Filter />
+      </div>
       <div></div>
     </div>
   );
