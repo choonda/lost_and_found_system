@@ -11,6 +11,11 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
+@theme {
+  --color-lightgreen: #d1e5e6;
+  --color-primarygreen : #00A991;
+  --color-buttongreen :#007F6D;
+}
 
 @media (prefers-color-scheme: dark) {
   :root {
