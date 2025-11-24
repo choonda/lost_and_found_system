@@ -12,7 +12,7 @@ const Filter = () => {
   return (
     <div className="w-full h-fit flex flex-rol gap-20 p-8">
       <div className="flex flex-row gap-8">
-        <div className="bg-white rounded-lg  px-6 py-4">
+        <div className="bg-white rounded-lg  px-6 py-4 ">
           <div className="text-primarygreen ">
             {types.map((type) => (
               <button
