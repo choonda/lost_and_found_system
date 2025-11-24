@@ -12,7 +12,7 @@ const Header = () => {
         <div>
           <Image src="/0nce.png" alt="logo" width={55} height={55} />
         </div>
-        <div className="font-semibold text-5xl flex flex-row">
+        <div className="font-semibold text-5xl flex flex-row ">
           <h1 className="text-primarygreen">0</h1>
           <h1 className="text-primarygreen/50">nce</h1>
         </div>
