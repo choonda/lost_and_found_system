@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import React, { useState } from "react";
 import { VscAdd, VscMap } from "react-icons/vsc";
 
@@ -49,10 +50,12 @@ const Filter = () => {
         </div>
       </div>
       <div className="flex flex-row gap-4 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer">
-        <button className="flex flex-row gap-4  items-center cursor-pointer  py-3 px-6">
-          <p className="text-white font-bold text-2xl">Add</p>
-          <VscAdd className="text-white font-extrabold w-8 h-8" />
-        </button>
+        <Link href="/lostfound">
+          <button className="flex flex-row gap-4  items-center cursor-pointer  py-3 px-6">
+            <p className="text-white font-bold text-2xl">Add</p>
+            <VscAdd className="text-white font-extrabold w-8 h-8" />
+          </button>
+        </Link>
       </div>
       <div className="flex flex-row gap-4 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer">
         <button className="flex flex-row gap-4  items-center cursor-pointer  py-3 px-6">
