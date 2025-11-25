@@ -5,7 +5,7 @@ import { VscLocation } from "react-icons/vsc";
 
 const ItemCard = () => {
   return (
-    <div className="w-fit h-fit bg-[#EBECF1] rounded-lg shadow-md">
+    <div className="w-[30%] h-fit bg-[#EBECF1] rounded-lg shadow-md">
       {/* UPPER */}
       <div className="relative">
         {/* PHOTO */}
@@ -13,9 +13,9 @@ const ItemCard = () => {
           <Image
             src="/Lost_sample.png"
             alt="lost item"
-            width={300}
+            width={200}
             height={200}
-            className="rounded-t-lg"
+            className="rounded-lg w-full h-fit"
           />
           <div className="absolute bottom-2 left-2 bg-white px-4 py-1 rounded-full text-black font-semibold shadow z-40">
             Lost
@@ -23,7 +23,7 @@ const ItemCard = () => {
         </div>
       </div>
       {/* BOTTOM */}
-      <div className="flex flex-row w-fit h-fit items-center px-2 py-2 gap-12">
+      <div className="flex flex-row w-full h-fit items-center px-3 py-2 justify-between">
         <span className="text-[#808080] text-xl">Earphone</span>
         <div className="flex flex-row gap-2">
           <div className="flex items-center gap-1">
