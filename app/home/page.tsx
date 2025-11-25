@@ -1,22 +1,15 @@
-import React from "react";
-import Header from "../component/header";
-import Filter from "../component/filter";
-import ItemList from "../component/ItemList";
+import { auth } from "@/lib/auth";
+import HomeClientPage from "./home-client";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-const page = () => {
-  return (
-    <div className="min-h-screen w-screen bg-lightgreen">
-      <div className="sticky top-0 z-50 left-0 right-0 bg-lightgreen">
-        <Header />
-      </div>
-      <div>
-        <Filter />
-      </div>
-      <div>
-        <ItemList />
-      </div>
-    </div>
-  );
-};
-
-export default page;
+export default async function HomePage() {
+  const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+  
+    if (!session) {
+      redirect("/auth");
+    }
+  return <HomeClientPage />;
+}

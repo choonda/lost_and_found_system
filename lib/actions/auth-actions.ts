@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/dist/client/components/navigation";
 import { auth } from "../auth";
 import { headers } from "next/headers";
 
@@ -28,8 +29,21 @@ export const signIn = async (email: string, password: string) => {
   return result;
 };
 
-export const signOut = async (email: string, password: string, name: string) => {
-  const result = await auth.api.signOut({headers: await headers() });
+export const signInSocial = async (provider: "google") => {
+  const {url} = await auth.api.signInSocial({
+    body: {
+      provider,
+      callbackURL: "/home",
+    },
+  });
+
+  if (url)  {
+    redirect(url)
+  }
+};
+
+export const signOut = async () => {
+  const result = await auth.api.signOut({ headers: await headers() });
 
   return result;
 };
