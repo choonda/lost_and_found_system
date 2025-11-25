@@ -6,7 +6,7 @@ import { VscAccount } from "react-icons/vsc";
 
 const Header = () => {
   return (
-    <div className="flex flex-row p-8 gap-20 border-b-[#C6D9DB] shadow-md shadow-gray-300 w-full h-fit items-center justify-between">
+    <div className="flex flex-row py-8 px-4 gap-20 border-b-[#C6D9DB] shadow-md shadow-gray-300 w-full h-fit items-center justify-between">
       {/* ICON */}
       <div className="flex flex-row h-fit items-center">
         <div>

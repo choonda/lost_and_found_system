@@ -10,7 +10,7 @@ const Filter = () => {
   const days = ["1 Day", "1 Week", "1 Month"];
 
   return (
-    <div className="w-full h-fit flex flex-rol gap-20 p-8">
+    <div className="w-full h-fit flex flex-rol justify-between p-8">
       <div className="flex flex-row gap-8">
         <div className="bg-white rounded-lg  px-6 py-4 ">
           <div className="text-primarygreen  ">
@@ -49,19 +49,21 @@ const Filter = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-row gap-4 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer">
-        <Link href="/lostfound">
+      <div className="flex flex-row gap-10">
+        <div className="flex flex-row gap-4 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer">
+          <Link href="/lostfound">
+            <button className="flex flex-row gap-4  items-center cursor-pointer  py-3 px-6">
+              <p className="text-white font-bold text-2xl">Add</p>
+              <VscAdd className="text-white font-extrabold w-8 h-8" />
+            </button>
+          </Link>
+        </div>
+        <div className="flex flex-row gap-4 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer">
           <button className="flex flex-row gap-4  items-center cursor-pointer  py-3 px-6">
-            <p className="text-white font-bold text-2xl">Add</p>
-            <VscAdd className="text-white font-extrabold w-8 h-8" />
+            <p className="text-white font-bold text-2xl">Map</p>
+            <VscMap className="text-white font-extrabold w-8 h-8" />
           </button>
-        </Link>
-      </div>
-      <div className="flex flex-row gap-4 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer">
-        <button className="flex flex-row gap-4  items-center cursor-pointer  py-3 px-6">
-          <p className="text-white font-bold text-2xl">Map</p>
-          <VscMap className="text-white font-extrabold w-8 h-8" />
-        </button>
+        </div>
       </div>
     </div>
   );
