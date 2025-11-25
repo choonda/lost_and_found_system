@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn, signUp } from "@/lib/actions/auth-actions";
+import { signIn, signUp, signInSocial } from "@/lib/actions/auth-actions";
 
 export default function AuthClientPage() {
   const [isSignIn, setIsSignIn] = useState(true);
@@ -21,7 +21,7 @@ export default function AuthClientPage() {
     setError("");
 
     try {
-      console.log("Logged in with", provider);
+      await signInSocial(provider);
     } catch (err) {
       setError(
         `Error authenticating with ${provider}: ${
