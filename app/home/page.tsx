@@ -5,7 +5,7 @@ import ItemList from "../component/ItemList";
 
 const page = () => {
   return (
-    <div className="min-h-screen w-screen bg-lightgreen">
+    <div className="min-h-full w-full bg-lightgreen">
       <div className="sticky top-0 z-50 left-0 right-0 bg-lightgreen">
         <Header />
       </div>
