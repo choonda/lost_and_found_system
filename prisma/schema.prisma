@@ -13,16 +13,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  STUDENT
+}
+
 model User {
   id            String    @id
   name          String
   email         String
   emailVerified Boolean   @default(false)
   image         String?
+  role          Role      @default(STUDENT)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+
+  lostItems  LostItem[]
+  foundItems FoundItem[]
+  claims     Claim[]
 
   @@unique([email])
   @@map("user")
@@ -74,4 +84,61 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Kolej {
+  id        Int         @id @default(autoincrement())
+  name      String
+  location  String?
+  contact   String?
+
+  foundItems FoundItem[]
+}
+
+model LostItem {
+  id           String     @id @default(uuid())
+  userId       String
+  title        String
+  description  String?
+  category     String
+  imageUrl     String?
+  lostLocation String?
+  lostDate     DateTime?
+  status       String     @default("lost") // lost, found, claimed
+  createdAt    DateTime   @default(now())
+
+  user   User      @relation(fields: [userId], references: [id])
+  claims Claim[]
+}
+
+model FoundItem {
+  id            String     @id @default(uuid())
+  finderId      String
+  title         String
+  description   String?
+  category      String
+  imageUrl      String?
+  foundLocation String?
+  foundDate     DateTime?
+  status        String      @default("found") // found, claimed
+  createdAt     DateTime    @default(now())
+
+  centerId Int?
+  center   Kolej?  @relation(fields: [centerId], references: [id])
+
+  finder User      @relation(fields: [finderId], references: [id])
+  claims Claim[]
+}
+
+model Claim {
+  id        String     @id @default(uuid())
+  userId    String
+  lostId    String?
+  foundId   String?
+  status    String     @default("pending") // pending, approved, rejected
+  createdAt DateTime   @default(now())
+
+  user  User      @relation(fields: [userId], references: [id])
+  lost  LostItem? @relation(fields: [lostId], references: [id])
+  found FoundItem? @relation(fields: [foundId], references: [id])
 }
