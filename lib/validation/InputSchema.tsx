@@ -5,7 +5,9 @@ export const FormSchema = z.object({
   location: z.string().min(1, { message: "Location is required" }),
   date: z.coerce.date({ message: "Date is required" }),
   description: z.string().optional(),
-  photo: z.any().refine((file) => file instanceof File, "Photo is required"),
+  photo: z.custom<FileList>().refine((files) => files && files.length > 0, {
+    message: "Photo is required",
+  }),
 });
 
 export type InputSchema = z.infer<typeof FormSchema>;
