@@ -8,6 +8,15 @@ import { useRouter } from "next/navigation";
 import { signOut } from "@/lib/actions/auth-actions";
 import Link from "next/link";
 
+const user = {
+  username: "User123",
+  email: "User123@gmail.com",
+};
+
+const handleSave = (newUsername: string, newEmail: string) => {
+  console.log("Updated data:", newUsername, newEmail);
+};
+
 const ProfilePage = () => {
   const router = useRouter();
 
@@ -34,10 +43,14 @@ const ProfilePage = () => {
         <div className="w-[50%] items-center flex flex-col gap-4  ">
           <VscAccount className="w-30 h-30 text-primarygreen bg-white rounded-full" />
           <div className="w-full">
-            <UserProfile />
+            <UserProfile
+              username={user.username}
+              email={user.email}
+              onSave={handleSave}
+            />
           </div>
         </div>
-        <div className="bg-black w-[50%]">test</div>
+        <div className="bg-black w-[50%] ">test</div>
       </div>
     </div>
   );

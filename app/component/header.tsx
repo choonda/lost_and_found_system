@@ -18,13 +18,15 @@ const Header = () => {
 "
     >
       {/* ICON */}
-      <div className=" items-center gap-2 sm:flex sm:flex-none">
-        <Image src="/0nce.png" alt="logo" width={50} height={50} />
-        <div className="font-semibold text-4xl flex flex-row">
-          <h1 className="text-primarygreen">0</h1>
-          <h1 className="text-primarygreen/50">nce</h1>
+      <Link href="/home">
+        <div className=" items-center gap-2 sm:flex sm:flex-none">
+          <Image src="/0nce.png" alt="logo" width={50} height={50} />
+          <div className="font-semibold text-4xl flex flex-row">
+            <h1 className="text-primarygreen">0</h1>
+            <h1 className="text-primarygreen/50">nce</h1>
+          </div>
         </div>
-      </div>
+      </Link>
 
       <div className="flex flex-1 flex-row items-center gap-4 md:gap-16 justify-between w-full">
         {/* SEARCH BAR */}
