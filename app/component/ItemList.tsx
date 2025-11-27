@@ -1,79 +1,57 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import ItemCard from "./Cards/ItemCard";
 
-const ItemDataSample = [
-  {
-    id: 1,
-    type: "Lost",
-    name: "Earphones",
-    date: "11/11/25",
-    location: "Mpk5",
-    photoUrl: "/Lost_sample.png",
-  },
-  {
-    id: 2,
-    type: "Found",
-    name: "Wallet",
-    date: "15/11/25",
-    location: "Library",
-    photoUrl: "/Lost_sample.png",
-  },
-  {
-    id: 3,
-    type: "Lost",
-    name: "Umbrella",
-    date: "10/11/25",
-    location: "Cafeteria",
-    photoUrl: "/Lost_sample.png",
-  },
-  {
-    id: 4,
-    type: "Found",
-    name: "Laptop",
-    date: "12/11/25",
-    location: "Lecture Hall",
-    photoUrl: "/Lost_sample.png",
-  },
-  {
-    id: 5,
-    type: "Lost",
-    name: "Backpack",
-    date: "09/11/25",
-    location: "Parking Lot",
-    photoUrl: "/Lost_sample.png",
-  },
-  {
-    id: 6,
-    type: "Found",
-    name: "Keys",
-    date: "13/11/25",
-    location: "Gym",
-    photoUrl: "/Lost_sample.png",
-  },
-  {
-    id: 7,
-    type: "Lost",
-    name: "Sunglasses",
-    date: "08/11/25",
-    location: "Canteen",
-    photoUrl: "/Lost_sample.png",
-  },
-];
-const ItemList = () => {
+type Item = {
+  id: number;
+  type: "Lost" | "Found";
+  title: string;
+  lostLocation?: string;
+  foundLocation?: string;
+  lostDate?: string;
+  foundDate?: string;
+  imageURL: string;
+};
+
+const ItemList = ({ type }: { type: "Lost" | "Found" }) => {
+  const [items, setItems] = useState<Item[]>([]);
+  const apiEndpoint = type === "Lost" ? "/api/lost-items" : "api/found-items";
+
+  useEffect(() => {
+    fetch(apiEndpoint)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Fetched items:", data);
+        const mappedItems = data.map((item: any) => ({
+          id: item.id,
+          type: type,
+          title: item.title,
+          lostLocation: item.lostLocation,
+          foundLocation: item.foundLocation,
+          lostDate: item.createdAt,
+          foundDate: item.createdAt,
+          imageURL: item.imageUrl,
+        }));
+        setItems(mappedItems);
+      })
+      .catch((err) => console.error("Failed to fetch items:", err));
+  }, [apiEndpoint, type]);
+
   return (
     <div className="flex flex-wrap gap-15 p-8 items-center justify-between">
-      {ItemDataSample.map((item) => (
+      {items.map((item) => (
         <ItemCard
           key={item.id}
           type={item.type}
-          itemName={item.name}
-          date={item.date}
-          location={item.location}
-          photoURL={item.photoUrl}
+          itemName={item.title}
+          date={item.lostDate || item.foundDate || ""}
+          location={item.lostLocation || item.foundLocation || ""}
+          photoURL={item.imageURL}
         />
       ))}
     </div>
-  );
+  )
 };
 
 export default ItemList;

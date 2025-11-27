@@ -27,7 +27,8 @@ export default function HomeClientPage() {
                 <Filter />
             </div>
             <div>
-                <ItemList />
+                <ItemList type="Lost" />
+                <ItemList type="Found" />
             </div>
         </div>
     )

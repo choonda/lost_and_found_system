@@ -24,7 +24,7 @@ const ItemCard = ({
         {/* PHOTO */}
         <div>
           <Image
-            src={photoURL}
+            src={photoURL ||  "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/No_Image_%282879926%29_-_The_Noun_Project.svg/640px-No_Image_%282879926%29_-_The_Noun_Project.svg.png"}
             alt="lost item"
             width={200}
             height={200}

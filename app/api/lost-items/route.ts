@@ -29,3 +29,27 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify(lostItem), { status: 200 });    
 }
 
+export async function GET(req: Request) {
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers(),
+        });
+
+        const lostItems = await prisma.lostItem.findMany({
+            orderBy: {
+                createdAt: "desc",
+            },
+            include: {
+                user: true,
+            },
+        });
+        return new Response(JSON.stringify(lostItems), {
+            status: 200,
+            headers: {"Content-Type": "application/json" },
+        });
+    } catch (error) {
+        console.error(error);
+        return new Response("Failed to fetch lost items", { status: 500});
+    }
+}
+
