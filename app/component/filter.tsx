@@ -10,6 +10,7 @@ const Filter = () => {
   const days = ["1 Day", "1 Week", "1 Month"];
 
   return (
+<<<<<<< HEAD
     <div className="w-full h-fit flex flex-wrap justify-between items-center gap-6 p-6">
       {/* LEFT FILTER GROUP */}
       <div className="flex flex-wrap gap-6">
@@ -22,6 +23,18 @@ const Filter = () => {
                 className={`px-4 py-2 rounded-lg ${
                   selectedType === type
                     ? "bg-[#1A8A94] font-bold text-white shadow-lg underline"
+=======
+    <div className="w-full h-fit flex flex-rol justify-between p-8">
+      <div className="flex flex-row gap-8">
+        <div className="bg-white rounded-lg  px-6 py-4 ">
+          <div className="text-primarygreen  ">
+            {types.map((type) => (
+              <button
+                key={type}
+                className={`px-8 py-2 ${
+                  selectedType === type
+                    ? "bg-[#1A8A94] font-bold text-white shadow-lg rounded-lg underline"
+>>>>>>> 85c30d91ae36695f171eefaff84b460f9150f9dc
                     : ""
                 }`}
                 onClick={() => setSelectedType(type)}
@@ -31,6 +44,7 @@ const Filter = () => {
             ))}
           </div>
         </div>
+<<<<<<< HEAD
 
         {/* DAY FILTER */}
         <div className="bg-white rounded-lg px-4 py-3">
@@ -68,6 +82,43 @@ const Filter = () => {
           <p className="text-white font-bold text-xl">Map</p>
           <VscMap className="text-white font-extrabold w-7 h-7" />
         </button>
+=======
+        <div>
+          <div className="bg-white rounded-lg  px-6 py-4">
+            <div className="text-primarygreen ">
+              {days.map((day) => (
+                <button
+                  key={day}
+                  className={`px-8 py-2 ${
+                    selectedDay === day
+                      ? "bg-[#1A8A94] font-bold text-white shadow-lg rounded-lg underline"
+                      : ""
+                  }`}
+                  onClick={() => setSelectedDay(day)}
+                >
+                  {day}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-row gap-10">
+        <div className="flex flex-row gap-4 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer">
+          <Link href="/lostfound">
+            <button className="flex flex-row gap-4  items-center cursor-pointer  py-3 px-6">
+              <p className="text-white font-bold text-2xl">Add</p>
+              <VscAdd className="text-white font-extrabold w-8 h-8" />
+            </button>
+          </Link>
+        </div>
+        <div className="flex flex-row gap-4 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer">
+          <button className="flex flex-row gap-4  items-center cursor-pointer  py-3 px-6">
+            <p className="text-white font-bold text-2xl">Map</p>
+            <VscMap className="text-white font-extrabold w-8 h-8" />
+          </button>
+        </div>
+>>>>>>> 85c30d91ae36695f171eefaff84b460f9150f9dc
       </div>
     </div>
   );
