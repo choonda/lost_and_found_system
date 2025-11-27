@@ -23,9 +23,20 @@ const LostPage = () => {
     resolver: zodResolver(FormSchema),
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log("Submission Success:", data);
-    alert("Form submitted! Check console for data.");
+    const response = await fetch("/api/lost-items", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (response?.status !== 200) {
+      alert("Failed to submit the form. Please try again.");
+      return;
+    }
+    alert("Form submitted successfully!");
     router.push("/home");
   };
 
