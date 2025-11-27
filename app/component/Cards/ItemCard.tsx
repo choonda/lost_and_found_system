@@ -24,7 +24,10 @@ const ItemCard = ({
         {/* PHOTO */}
         <div>
           <Image
-            src={photoURL ||  "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/No_Image_%282879926%29_-_The_Noun_Project.svg/640px-No_Image_%282879926%29_-_The_Noun_Project.svg.png"}
+            src={
+              photoURL ||
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/No_Image_%282879926%29_-_The_Noun_Project.svg/640px-No_Image_%282879926%29_-_The_Noun_Project.svg.png"
+            }
             alt="lost item"
             width={100}
             height={100}
@@ -45,7 +48,7 @@ const ItemCard = ({
 
         <div className="w-full justify-start flex flex-col gap-1 sm:flex-row sm:justify-end">
           <div className="flex items-center gap-1">
-            <AiOutlineCalendar className="w-4 h-4 text-[#1A8A94]" />
+            <AiOutlineCalendar className="w-5 h-5 text-[#1A8A94]" />
             <span className="text-[#808080] text-sm">{date}</span>
           </div>
 

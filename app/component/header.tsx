@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { VscAccount } from "react-icons/vsc";
@@ -42,9 +43,11 @@ const Header = () => {
         </div>
 
         {/* USER */}
-        <button className="flex-none">
-          <VscAccount className="w-10 h-10 text-primarygreen bg-white rounded-full" />
-        </button>
+        <Link href="/profile" className="flex items-center gap-2 ">
+          <button className="flex-none cursor-pointer">
+            <VscAccount className="w-10 h-10 text-primarygreen bg-white rounded-full" />
+          </button>
+        </Link>
       </div>
     </div>
   );

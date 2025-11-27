@@ -41,13 +41,13 @@ export default function AuthClientPage() {
     try {
       if (isSignIn) {
         const result = await signIn(email, password);
-        if(!result.user) {
-            setError("Invalid email or password");
+        if (!result.user) {
+          setError("Invalid email or password");
         }
       } else {
         const result = await signUp(email, password, name);
-        if(!result.user) {
-            setError("Failed to create account");
+        if (!result.user) {
+          setError("Failed to create account");
         }
       }
     } catch (err) {
@@ -158,7 +158,7 @@ export default function AuthClientPage() {
                   required={!isSignIn}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 border text-black border-gray-300 rounded-lg text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-primarygreen focus:border-primarygreen transition-colors"
+                  className="w-full px-3 py-2 border  border-gray-300 rounded-lg text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-primarygreen focus:border-primarygreen transition-colors"
                   placeholder="Enter your full name"
                 />
               </div>

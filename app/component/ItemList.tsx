@@ -23,6 +23,7 @@ const ItemList = ({ type }: { type: "Lost" | "Found" }) => {
       .then((res) => res.json())
       .then((data) => {
         console.log("Fetched items:", data);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const mappedItems = data.map((item: any) => ({
           id: item.id,
           type: type,
@@ -39,7 +40,7 @@ const ItemList = ({ type }: { type: "Lost" | "Found" }) => {
   }, [apiEndpoint, type]);
 
   return (
-    <div className="flex flex-wrap gap-15 p-8 items-center justify-between">
+    <div className="flex flex-wrap gap-15 p-8 items-center">
       {items.map((item) => (
         <ItemCard
           key={item.id}
@@ -51,7 +52,7 @@ const ItemList = ({ type }: { type: "Lost" | "Found" }) => {
         />
       ))}
     </div>
-  )
+  );
 };
 
 export default ItemList;
