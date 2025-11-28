@@ -1,8 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { AiOutlineCalendar } from "react-icons/ai";
 import { VscLocation } from "react-icons/vsc";
 
+const role: "admin" | "user" = "admin";
 type ItemCardProps = {
   type: string;
   itemName: string;
@@ -20,28 +22,30 @@ const ItemCard = ({
   return (
     <div className="w-full sm:w-[30%] h-fit bg-[#EBECF1] rounded-lg shadow-md">
       {/* UPPER */}
-      <div className="relative">
-        {/* PHOTO */}
-        <div>
-          <Image
-            src={
-              photoURL ||
-              "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/No_Image_%282879926%29_-_The_Noun_Project.svg/640px-No_Image_%282879926%29_-_The_Noun_Project.svg.png"
-            }
-            alt="lost item"
-            width={100}
-            height={100}
-            className="rounded-lg w-full h-fit"
-          />
-          <div className="absolute bottom-2 left-2 bg-white px-4 py-1 rounded-full text-black font-semibold shadow z-40">
-            {type}
+      <Link href={`/item/${itemName}`}>
+        <div className="relative">
+          {/* PHOTO */}
+          <div>
+            <Image
+              src={
+                photoURL ||
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/No_Image_%282879926%29_-_The_Noun_Project.svg/640px-No_Image_%282879926%29_-_The_Noun_Project.svg.png"
+              }
+              alt="lost item"
+              width={100}
+              height={100}
+              className="rounded-lg w-full h-fit"
+            />
+            <div className="absolute bottom-2 left-2 bg-white px-4 py-1 rounded-full text-black font-semibold shadow z-40">
+              {type}
+            </div>
           </div>
         </div>
-      </div>
+      </Link>
       {/* BOTTOM */}
       <div
         className="flex w-full items-center px-3 py-2 
-             flex-col gap-2 
+             flex-col gap-4 
              sm:flex-row sm:justify-between"
       >
         <span className="text-[#808080] text-xl w-full">{itemName}</span>
@@ -59,6 +63,11 @@ const ItemCard = ({
             </span>
           </div>
         </div>
+        {role === "admin" && (
+          <div className="p-2 bg-buttongreen rounded-full text-white font-semibold hover:bg-[#006557] cursor-pointer">
+            <button className="cursor-pointer">Delete</button>
+          </div>
+        )}
       </div>
     </div>
   );

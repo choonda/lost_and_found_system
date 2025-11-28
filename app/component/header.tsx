@@ -19,7 +19,7 @@ const Header = () => {
     >
       {/* ICON */}
       <Link href="/home">
-        <div className=" items-center gap-2 sm:flex sm:flex-none">
+        <div className=" items-center gap-2 sm:flex sm:flex-none flex">
           <Image src="/0nce.png" alt="logo" width={50} height={50} />
           <div className="font-semibold text-4xl flex flex-row">
             <h1 className="text-primarygreen">0</h1>

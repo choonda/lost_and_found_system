@@ -64,10 +64,12 @@ const Filter = () => {
         </Link>
 
         {/* MAP BUTTON */}
-        <button className="flex flex-row gap-3 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer py-3 px-6">
-          <p className="text-white font-bold text-xl">Map</p>
-          <VscMap className="text-white font-extrabold w-7 h-7" />
-        </button>
+        <Link href="/map">
+          <button className="flex flex-row gap-3 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer py-3 px-6">
+            <p className="text-white font-bold text-xl">Map</p>
+            <VscMap className="text-white font-extrabold w-7 h-7" />
+          </button>
+        </Link>
       </div>
     </div>
   );

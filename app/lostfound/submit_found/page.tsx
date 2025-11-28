@@ -80,7 +80,7 @@ const FoundPage = () => {
             </div>
             <div className="w-full  bg-[#E6F6F4] rounded-md flex">
               <input
-                className={`w-full flex flex-row items-center gap-5 h-fit px-4 py-2 focus:ring-[#b0e4dd] focus:ring-2 focus:outline-none transition-all duration-200 `}
+                className={`w-full flex flex-row placeholder-[#808080] items-center gap-5 h-fit px-4 py-2 focus:ring-[#b0e4dd] focus:ring-2 focus:outline-none transition-all duration-200 `}
                 type="date"
                 {...register("date")}
               />

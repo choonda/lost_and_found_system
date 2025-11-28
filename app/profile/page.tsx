@@ -7,6 +7,7 @@ import UserProfile from "../component/Form/UserProfile";
 import { useRouter } from "next/navigation";
 import { signOut } from "@/lib/actions/auth-actions";
 import Link from "next/link";
+import ItemList from "../component/ItemList";
 
 const user = {
   username: "User123",
@@ -39,8 +40,8 @@ const ProfilePage = () => {
           <p className="text-2xl text-red-500">LOGOUT</p>
         </div>
       </div>
-      <div className="flex flex-row gap-4 p-4">
-        <div className="w-[50%] items-center flex flex-col gap-4  ">
+      <div className="flex flex-col gap-4 p-4">
+        <div className="w-full items-center flex flex-col gap-4  ">
           <VscAccount className="w-30 h-30 text-primarygreen bg-white rounded-full" />
           <div className="w-full">
             <UserProfile
@@ -50,7 +51,10 @@ const ProfilePage = () => {
             />
           </div>
         </div>
-        <div className="bg-black w-[50%] ">test</div>
+      </div>
+      <div className="">
+        <p className="text-[#969DA3] text-xl underline flex px-4">Your Post</p>
+        <ItemList type="Lost" />
       </div>
     </div>
   );
