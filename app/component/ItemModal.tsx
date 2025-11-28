@@ -34,7 +34,7 @@ const ItemModal = ({
         </div>
 
         {/* ITEM IMAGE */}
-        <div className="relative w-full h-100 mb-4">
+        <div className="relative w-full h-120 mb-4">
           <Image
             src={
               photoURL ||
