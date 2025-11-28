@@ -13,7 +13,7 @@ export default function HomeClientPage() {
       <div>
         <Filter />
       </div>
-      <div>
+      <div className="">
         <ItemList type="Lost" />
         <ItemList type="Found" />
       </div>
