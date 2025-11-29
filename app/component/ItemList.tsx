@@ -14,7 +14,13 @@ type Item = {
   imageURL: string;
 };
 
-const ItemList = ({ type }: { type: "Lost" | "Found" }) => {
+const ItemList = ({
+  type,
+  search,
+}: {
+  type: "Lost" | "Found";
+  search: string;
+}) => {
   const [items, setItems] = useState<Item[]>([]);
   const apiEndpoint = type === "Lost" ? "/api/lost-items" : "api/found-items";
 
@@ -39,9 +45,12 @@ const ItemList = ({ type }: { type: "Lost" | "Found" }) => {
       .catch((err) => console.error("Failed to fetch items:", err));
   }, [apiEndpoint, type]);
 
+  const filtered = items.filter((item) =>
+    item.title.toLowerCase().includes((search || "").toLowerCase())
+  );
   return (
     <div className="flex flex-wrap gap-15 p-8 items-center">
-      {items.map((item) => (
+      {filtered.map((item) => (
         <ItemCard
           key={item.id}
           type={item.type}

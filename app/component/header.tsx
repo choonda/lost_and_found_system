@@ -5,7 +5,7 @@ import React from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { VscAccount } from "react-icons/vsc";
 
-const Header = () => {
+const Header = ({ onSearch }: { onSearch: (v: string) => void }) => {
   return (
     <div
       className="
@@ -37,6 +37,9 @@ const Header = () => {
               className="flex-1 min-w-0 focus:outline-none placeholder-gray-400 text-base"
               type="text"
               placeholder="Find something..."
+              onChange={(e) => {
+                onSearch(e.target.value);
+              }}
             />
             <button className="bg-buttongreen rounded-full py-2 px-5 flex-none hover:bg-[#006557] cursor-pointer">
               <p className="font-semibold text-white">Search</p>

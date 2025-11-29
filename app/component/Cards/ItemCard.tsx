@@ -37,7 +37,7 @@ const ItemCard = ({
               alt="lost item"
               width={100}
               height={100}
-              className="rounded-lg w-full object-fill h-64 "
+              className="rounded-lg w-full object-cover h-64 "
             />
             <div className="absolute bottom-2 left-2 bg-white px-4 py-1 rounded-full text-black font-semibold shadow z-40">
               {type}
