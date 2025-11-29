@@ -25,12 +25,22 @@ const LostPage = () => {
 
   const onSubmit = async (data: any) => {
     console.log("Submission Success:", data);
+    // Send FormData (incl. File) to the server
+    const fd = new FormData();
+    fd.append("itemName", data.itemName || "");
+    fd.append("description", data.description || "");
+    fd.append("location", data.location || "");
+    fd.append("date", data.date || "");
+    fd.append("category", data.category || "Others");
+    if (data.photo && data.photo[0]) {
+      const file = data.photo[0];
+      if (file.size > 4 * 1024 * 1024) return alert("Image must be smaller than 4MB");
+      fd.append("photo", file);
+    }
+
     const response = await fetch("/api/lost-items", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+      body: fd,
     });
     if (response?.status !== 200) {
       alert("Failed to submit the form. Please try again.");

@@ -12,8 +12,8 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import { RiFolderUploadLine } from "react-icons/ri";
 
 const FoundPage = () => {
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const router = useRouter();
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -21,16 +21,26 @@ const FoundPage = () => {
     watch,
   } = useForm({
     resolver: zodResolver(FormSchema),
-  });
+  })
 
   const onSubmit = async (data: any) => {
     console.log("Submission Success:", data);
+    // Build FormData so the real File object (with name + size) is sent to the server
+    const fd = new FormData();
+    fd.append("itemName", data.itemName || "");
+    fd.append("description", data.description || "");
+    fd.append("location", data.location || "");
+    fd.append("date", data.date || "");
+    fd.append("category", data.category || "Others");
+    if (data.photo && data.photo[0]) {
+      const file = data.photo[0];
+      if (file.size > 4 * 1024 * 1024) return alert("Image must be smaller than 4MB");
+      fd.append("photo", file);
+    }
+
     const response = await fetch("/api/found-items", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+      body: fd,
     });
     if (response?.status !== 200) {
       alert("Failed to submit the form. Please try again.");
@@ -38,15 +48,15 @@ const FoundPage = () => {
     }
     alert("Form submitted successfully!");
     router.push("/home");
-  };
+  }
 
   const watchPhoto = watch("photo");
-  useEffect(() => {
-    if (watchPhoto && watchPhoto[0]) {
-      const file = watchPhoto[0];
-      setPhotoPreview(URL.createObjectURL(file));
-    }
-  }, [watchPhoto]);
+    useEffect(() => {
+      if (watchPhoto && watchPhoto[0]) {
+        const file = watchPhoto[0];
+        setPhotoPreview(URL.createObjectURL(file));
+      }
+    }, [watchPhoto]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -101,55 +111,55 @@ const FoundPage = () => {
         </div>
         <div className="bg-white p-4 items-center rounded-xl">
           <label
-            className={`flex flex-col  items-center justify-center relative ${
-              photoPreview
-                ? ""
-                : "border-2 border-dashed border-[#969DA3] cursor-pointer "
-            }`}
-            htmlFor="photo-upload"
-          >
-            {photoPreview && (
-              <div className="relative">
-                <Image
-                  src={photoPreview}
-                  alt="preview"
-                  className="w-fit h-64 object-cover rounded-md border"
-                  width={40}
-                  height={40}
-                />
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setPhotoPreview(null);
-                  }}
-                  className="absolute top-2 left-2 bg-lightgreen text-[#969DA3] rounded-full w-fit h-fit p-1 flex items-center justify-center shadow-lg cursor-pointer text-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-            )}
-            {!photoPreview && (
-              <div className="items-center flex flex-col">
-                <RiFolderUploadLine className="text-[#969DA3] w-30 h-30 " />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="outline-none hidden"
-                  id="photo-upload"
-                  {...register("photo")}
-                />
-                <p className="text-[#969DA3] text-2xl font-light">
-                  Upload a photo
-                </p>
-                {errors.photo && (
-                  <p className="ml-2 text-red-500 text-sm">
-                    {errors.photo?.message as string}
-                  </p>
-                )}
-              </div>
-            )}
-          </label>
+                      className={`flex flex-col  items-center justify-center relative ${
+                        photoPreview
+                          ? ""
+                          : "border-2 border-dashed border-[#969DA3] cursor-pointer "
+                      }`}
+                      htmlFor="photo-upload"
+                    >
+                      {photoPreview && (
+                        <div className="relative">
+                          <Image
+                            src={photoPreview}
+                            alt="preview"
+                            className="w-fit h-64 object-cover rounded-md border"
+                            width={40}
+                            height={40}
+                          />
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent triggering the file input
+                              setPhotoPreview(null);
+                            }}
+                            className="absolute top-2 left-2 bg-lightgreen text-[#969DA3] rounded-full w-fit h-fit p-1 flex items-center justify-center shadow-lg cursor-pointer text-sm"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      )}
+                      {!photoPreview && (
+                        <div className="items-center flex flex-col">
+                          <RiFolderUploadLine className="text-[#969DA3] w-30 h-30 " />
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="outline-none hidden"
+                            id="photo-upload"
+                            {...register("photo")}
+                          />
+                          <p className="text-[#969DA3] text-2xl font-light">
+                            Upload a photo
+                          </p>
+                          {errors.photo && (
+                            <p className="ml-2 text-red-500 text-sm">
+                              {errors.photo?.message as string}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </label>
         </div>
         <div className="w-fit h-fit px-8 py-4 bg-buttongreen rounded-full cursor-pointer hover:bg-[#006557]">
           <button className="cursor-pointer" type="submit">
