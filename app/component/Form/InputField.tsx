@@ -15,7 +15,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
           <input
             ref={ref}
             {...props}
-            className={`w-full h-fit px-4 py-2 focus:ring-[#b0e4dd] focus:ring-2 focus:outline-none transition-all duration-200 `}
+            className={`w-full h-fit px-4 py-2 placeholder-[#808080] focus:ring-[#b0e4dd] focus:ring-2 focus:outline-none transition-all duration-200 `}
             placeholder={`Enter ${placeholder}`}
           />
         </div>

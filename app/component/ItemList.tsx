@@ -14,7 +14,13 @@ type Item = {
   imageURL: string;
 };
 
-const ItemList = ({ type }: { type: "Lost" | "Found" }) => {
+const ItemList = ({
+  type,
+  search,
+}: {
+  type: "Lost" | "Found";
+  search: string;
+}) => {
   const [items, setItems] = useState<Item[]>([]);
   const apiEndpoint = type === "Lost" ? "/api/lost-items" : "api/found-items";
 
@@ -23,6 +29,7 @@ const ItemList = ({ type }: { type: "Lost" | "Found" }) => {
       .then((res) => res.json())
       .then((data) => {
         console.log("Fetched items:", data);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const mappedItems = data.map((item: any) => ({
           id: item.id,
           type: type,
@@ -38,9 +45,12 @@ const ItemList = ({ type }: { type: "Lost" | "Found" }) => {
       .catch((err) => console.error("Failed to fetch items:", err));
   }, [apiEndpoint, type]);
 
+  const filtered = items.filter((item) =>
+    item.title.toLowerCase().includes((search || "").toLowerCase())
+  );
   return (
-    <div className="flex flex-wrap gap-15 p-8 items-center justify-between">
-      {items.map((item) => (
+    <div className="flex flex-wrap gap-15 p-8 items-center">
+      {filtered.map((item) => (
         <ItemCard
           key={item.id}
           type={item.type}
@@ -51,7 +61,7 @@ const ItemList = ({ type }: { type: "Lost" | "Found" }) => {
         />
       ))}
     </div>
-  )
+  );
 };
 
 export default ItemList;
