@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
+import { TbUserEdit } from "react-icons/tb";
 import { VscAdd, VscMap } from "react-icons/vsc";
-
+const role: "admin" | "user" = "admin";
 const Filter = () => {
   const [selectedType, setSelectedType] = useState("All");
   const [selectedDay, setSelectedDay] = useState("1 Day");
@@ -70,6 +71,14 @@ const Filter = () => {
             <VscMap className="text-white font-extrabold w-7 h-7" />
           </button>
         </Link>
+        {role === "admin" && (
+          <Link href="/admin">
+            <button className="flex flex-row gap-3 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer py-3 px-6">
+              <p className="text-white font-bold text-xl">Admin</p>
+              <TbUserEdit className="text-white font-extrabold w-7 h-7" />
+            </button>
+          </Link>
+        )}
       </div>
     </div>
   );
