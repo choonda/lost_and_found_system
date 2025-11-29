@@ -1,42 +1,63 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import InputField from "@/app/component/Form/InputField";
-import { FormSchema } from "@/lib/validation/InputSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
+
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { RiFolderUploadLine } from "react-icons/ri";
+
+import { ItemCreateFormSchema } from "@/lib/validation/InputSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
+
+import InputField from "@/app/component/Form/InputField";
 
 const FoundPage = () => {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const router = useRouter();
+
+  type FormValues = z.infer<typeof ItemCreateFormSchema>;
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
   } = useForm({
-    resolver: zodResolver(FormSchema),
+    resolver: zodResolver(ItemCreateFormSchema),
   });
 
-  const onSubmit = async (data: any) => {
-    console.log("Submission Success:", data);
-    const response = await fetch("/api/found-items", {
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    console.log("Submission Success:", data.name);
+
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("location", data.location ?? "");
+    formData.append("description", data.description ?? "");
+    formData.append("date", data.date ? data.date.toISOString() : "");
+    formData.append("type", "Found");
+    formData.append("centerId", "1");
+    if (data.photo && data.photo[0]) {
+      formData.append("photo", data.photo[0]);
+    }
+
+    console.log("Submission Success:", formData);
+
+    const response = await fetch("/api/items", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+      body: formData,
     });
+
     if (response?.status !== 200) {
       alert("Failed to submit the form. Please try again.");
       return;
     }
+
     alert("Form submitted successfully!");
+
     router.push("/home");
   };
 
@@ -62,8 +83,8 @@ const FoundPage = () => {
             <InputField
               label="Item Name"
               placeholder="item name"
-              {...register("itemName")}
-              error={errors.itemName?.message}
+              {...register("name")}
+              error={errors.name?.message}
             />
           </div>
           <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
