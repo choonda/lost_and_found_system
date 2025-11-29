@@ -43,10 +43,10 @@ const MapComponent: React.FC<MapComponentProps> = ({ stations }) => {
     <GoogleMap
       mapContainerStyle={{ width: "100%", height: "100%" }}
       zoom={13}
-      center={userLocation || { lat: 3.139, lng: 101.6869 }} // fallback center (KL)
+      center={userLocation || { lat: 3.139, lng: 101.6869 }}
     >
       {/* User location marker */}
-      {userLocation && <Marker position={userLocation} label="You" />}
+      {userLocation && <Marker position={userLocation} label="Me" />}
 
       {/* Stations */}
       {stations.map((station) => (
