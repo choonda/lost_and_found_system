@@ -1,82 +1,28 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import Header from "../component/header";
-import OverviewChart from "../component/OverviewChart";
-import Table from "../component/Table";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import AdminClient from "./AdminClient";
 
-const Lostdata = [
-  { name: "Pending", value: 400, fill: "#0088FE" },
-  { name: "Success", value: 200, fill: "#00C49F" },
-];
-const Founddata = [
-  { name: "Pending", value: 300, fill: "#FFBB28" },
-  { name: "Success", value: 500, fill: "#FF8042" },
-];
 
-const AdminPage = () => {
-  const [searchValue, setSearchValue] = useState("");
-  const [users, setUsers] = useState<
-    { id: string; name: string; email: string }[]
-  >([]);
+const AdminPage = async () => {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return redirect("/auth");
 
-  // Fetch users
-  useEffect(() => {
-    fetch("/api/user")
-      .then((res) => res.json())
-      .then((data) => setUsers(data))
-      .catch((err) => console.error("Failed to fetch users:", err));
-  }, []);
+  const currentUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true },
+  });
 
-  const deleteUser = async (id: string) => {
-    if (!confirm("Are you sure you want to delele this user?")) {
-      return;
-    }
-    try {
-      const res = await fetch(`/api/user?userId=${id}`, {
-        method: "DELETE",
-      });
+  if (!currentUser || currentUser.role !== "ADMIN") {
+    // not allowed to access admin route
+    return redirect("/");
+  }
 
-      if (res.ok) {
-        setUsers((prev) => prev.filter((users) => users.id !== id));
-      } else {
-        alert("Failed to delete user");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error deleting user");
-    }
-  };
+  // server checks completed, render client-side UI
 
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchValue.toLowerCase())
-  );
-
-  return (
-    <div className="min-h-screen w-full bg-lightgreen flex flex-col gap-4 p-4">
-      <Header onSearch={setSearchValue} />
-
-      <div className="flex flex-1 gap-4 px-4 min-h-[300px]">
-        <div className="bg-[#FAFCFD] rounded-2xl flex-1 ">
-          <OverviewChart
-            title="Lost Item Overview"
-            data={Lostdata}
-            totalCount={120}
-          />
-        </div>
-        <div className="bg-[#FAFCFD] rounded-2xl flex-1">
-          <OverviewChart
-            title="Found Item Overview"
-            data={Founddata}
-            totalCount={150}
-          />
-        </div>
-      </div>
-
-      <div className="flex-1 bg-[#FAFCFD] rounded-2xl p-4 mx-4 relative">
-        <Table data={filteredUsers} onDelete={deleteUser} />
-      </div>
-    </div>
-  );
+  // render client-side admin UI component (it will fetch the users itself)
+  return <AdminClient />;
 };
 
 export default AdminPage;
