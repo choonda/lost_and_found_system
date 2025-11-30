@@ -52,7 +52,10 @@ const MapComponent: React.FC<MapComponentProps> = ({ stations }) => {
       {stations.map((station) => (
         <Marker
           key={station.id}
-          position={{ lat: station.latitude, lng: station.longitude }}
+          position={{
+            lat: Number(station.latitude),
+            lng: Number(station.longitude),
+          }}
           label={station.name}
         />
       ))}

@@ -162,3 +162,28 @@ export async function GET(req: Request) {
 
   return new Response(JSON.stringify(items), { status: 200 });
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    const url = new URL(req.url);
+    const itemId = url.searchParams.get("itemId");
+
+    if (!itemId) {
+      return new Response(JSON.stringify("No itemId provided"), {
+        status: 200,
+      });
+    }
+    const users = await prisma.item.delete({
+      where: { id: itemId },
+    });
+
+    return new Response(JSON.stringify(users), { status: 200 });
+  } catch (err) {
+    console.error(err);
+    return new Response("Failed to delete item", { status: 500 });
+  }
+}

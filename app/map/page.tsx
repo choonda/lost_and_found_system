@@ -3,15 +3,18 @@ import React from "react";
 import { prisma } from "@/lib/prisma";
 import MapComponent from "../component/MapComponent";
 
-// Server component: fetch stations directly
 const MapPage = async () => {
-  const stations = await prisma.kolej.findMany({
-    select: { id: true, name: true, location: true },
+  const stations = await prisma.center.findMany({
+    select: { id: true, name: true, longitude: true, latitude: true },
   });
 
+  const validStations = stations.filter(
+    (station) => station.longitude !== null && station.latitude !== null
+  ) as Array<{ id: number; name: string; longitude: number; latitude: number }>;
+  console.log("Station:", validStations);
   return (
     <div className="h-screen w-full">
-      <MapComponent stations={stations} />
+      <MapComponent stations={validStations} />
     </div>
   );
 };

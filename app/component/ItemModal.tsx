@@ -9,6 +9,7 @@ type ItemModalProps = {
   location: string;
   date: string;
   photoURL: string;
+  description: string;
   onClose: () => void;
 };
 
@@ -18,11 +19,12 @@ const ItemModal = ({
   location,
   date,
   photoURL,
+  description,
   onClose,
 }: ItemModalProps) => {
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-      <div className="bg-[#EBECF1] w-fit max-w-xl h-fit p-6 rounded-lg shadow-lg relative flex flex-col">
+    <div className=" fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+      <div className="bg-[#EBECF1] min-w-[30%] max-w-xl h-fit p-6 rounded-lg shadow-lg relative flex flex-col">
         {/* Close button */}
         <div className="flex justify-end">
           <button
@@ -63,10 +65,7 @@ const ItemModal = ({
         </div>
 
         <div className="mt-4 text-gray-700">
-          <p>
-            Description of the item goes here. You can expand this section with
-            more info.
-          </p>
+          <p>{description}</p>
         </div>
       </div>
     </div>
