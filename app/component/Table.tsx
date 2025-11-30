@@ -22,7 +22,7 @@ const Table = ({ data }: TableProps) => {
         {data.map((row, index) => (
           <tr
             key={index}
-            className={`odd:bg-[#E6F6F4] even:bg-[#b0e4dd] rounded-xl`}
+            className={`odd:bg-[#E6F6F4] even:bg-[#b0e4dd] rounded-xl hover:bg-black/10 transition-colors`}
           >
             <td className="p-1 text-[#808080]">{row.name}</td>
             <td className="p-1 text-[#808080]">{row.email}</td>

@@ -54,7 +54,7 @@ const ProfilePage = () => {
       </div>
       <div className="">
         <p className="text-[#969DA3] text-xl underline flex px-4">Your Post</p>
-        <ItemList type="Lost" />
+        <ItemList type="Role" />
       </div>
     </div>
   );

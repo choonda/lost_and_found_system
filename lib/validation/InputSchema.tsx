@@ -1,7 +1,7 @@
 import z from "zod";
 
-export const FormSchema = z.object({
-  itemName: z.string().min(1, { message: "Item name is required" }),
+export const ItemCreateFormSchema = z.object({
+  name: z.string().min(1, { message: "Item name is required" }),
   location: z.string().min(1, { message: "Location is required" }),
   date: z.coerce.date({ message: "Date is required" }),
   description: z.string().optional(),
@@ -10,4 +10,4 @@ export const FormSchema = z.object({
   }),
 });
 
-export type InputSchema = z.infer<typeof FormSchema>;
+export type InputSchema = z.infer<typeof ItemCreateFormSchema>;
