@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 import { signIn, signUp, signInSocial } from "@/lib/actions/auth-actions";
 
 export default function AuthClientPage() {
@@ -66,6 +67,14 @@ export default function AuthClientPage() {
       <div className="flex items-center justify-center p-4 pt-20">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
+            {/* logo + brand centered above the heading */}
+            <div className="flex items-center justify-center gap-2 mb-8">
+              <Image src="/0nce.png" alt="logo" width={70} height={70} />
+              <div className="font-semibold text-5xl flex items-center">
+                <span className="text-primarygreen">0</span>
+                <span className="text-primarygreen/50">nce</span>
+              </div>
+            </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               {isSignIn ? "Welcome Back" : "Create Account"}
             </h1>
