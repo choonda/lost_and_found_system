@@ -16,6 +16,7 @@ export default function HomeClientPage() {
       </div>
       <div className="">
         <ItemList type="Found" search={searchValue} />
+        <ItemList type="Lost" search={searchValue} />
       </div>
     </div>
   );

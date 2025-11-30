@@ -1,52 +1,63 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import InputField from "@/app/component/Form/InputField";
-import { FormSchema } from "@/lib/validation/InputSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
+
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { RiFolderUploadLine } from "react-icons/ri";
 
+import { ItemCreateFormSchema } from "@/lib/validation/InputSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
+
+import InputField from "@/app/component/Form/InputField";
+
 const LostPage = () => {
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const router = useRouter();
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+
+  type FormValues = z.infer<typeof ItemCreateFormSchema>;
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
   } = useForm({
-    resolver: zodResolver(FormSchema),
+    resolver: zodResolver(ItemCreateFormSchema),
   });
 
-  const onSubmit = async (data: any) => {
-    console.log("Submission Success:", data);
-    // Send FormData (incl. File) to the server
-    const fd = new FormData();
-    fd.append("itemName", data.itemName || "");
-    fd.append("description", data.description || "");
-    fd.append("location", data.location || "");
-    fd.append("date", data.date || "");
-    fd.append("category", data.category || "Others");
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    console.log("Submission Success:", data.name);
+
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("location", data.location ?? "");
+    formData.append("description", data.description ?? "");
+    formData.append("date", data.date ? data.date.toISOString() : "");
+    formData.append("type", "Lost");
+    formData.append("centerId", "1");
     if (data.photo && data.photo[0]) {
-      const file = data.photo[0];
-      if (file.size > 4 * 1024 * 1024) return alert("Image must be smaller than 4MB");
-      fd.append("photo", file);
+      formData.append("photo", data.photo[0]);
     }
 
-    const response = await fetch("/api/lost-items", {
+    console.log("Submission Success:", formData);
+
+    const response = await fetch("/api/items", {
       method: "POST",
-      body: fd,
+      body: formData,
     });
+
     if (response?.status !== 200) {
       alert("Failed to submit the form. Please try again.");
       return;
     }
+
     alert("Form submitted successfully!");
+
     router.push("/home");
   };
 
@@ -72,8 +83,8 @@ const LostPage = () => {
             <InputField
               label="Item Name"
               placeholder="item name"
-              {...register("itemName")}
-              error={errors.itemName?.message}
+              {...register("name")}
+              error={errors.name?.message}
             />
           </div>
           <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
@@ -90,7 +101,7 @@ const LostPage = () => {
             </div>
             <div className="w-full  bg-[#E6F6F4] rounded-md flex">
               <input
-                className={`w-full flex flex-row items-center gap-5 h-fit px-4 py-2 focus:ring-[#b0e4dd] focus:ring-2 focus:outline-none transition-all duration-200 `}
+                className={`w-full flex flex-row placeholder-[#808080] items-center gap-5 h-fit px-4 py-2 focus:ring-[#b0e4dd] focus:ring-2 focus:outline-none transition-all duration-200 `}
                 type="date"
                 {...register("date")}
               />
