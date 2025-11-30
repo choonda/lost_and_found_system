@@ -13,6 +13,7 @@ type ItemCardProps = {
   location: string;
   date: string;
   photoURL: string;
+  description: string;
   onDelete: (id: string) => void;
 };
 const ItemCard = ({
@@ -22,6 +23,7 @@ const ItemCard = ({
   location,
   date,
   photoURL,
+  description,
   onDelete,
 }: ItemCardProps) => {
   const [openItem, setOpenItem] = useState(false);
@@ -85,6 +87,7 @@ const ItemCard = ({
           location={location}
           date={date}
           photoURL={photoURL}
+          description={description}
           onClose={() => setOpenItem(false)}
         />
       )}

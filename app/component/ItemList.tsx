@@ -81,6 +81,7 @@ const ItemList = ({
             itemName={item.name}
             location={item.location || ""}
             photoURL={item.imageUrl}
+            description={item.description || ""}
             date={
               item.createdAt
                 ? format(new Date(item.createdAt), "dd/MM HH:mm")
@@ -93,7 +94,7 @@ const ItemList = ({
       {deleteMessage && (
         <div
           className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                  bg-gray-300 text-white px-4 py-2 rounded shadow-md z-50"
+                  bg-green-300 text-white px-4 py-2 rounded shadow-md z-50"
         >
           {deleteMessage}
         </div>
