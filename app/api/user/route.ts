@@ -4,9 +4,19 @@ import { headers } from "next/headers";
 
 export async function GET(req: Request) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
+    const session = await auth.api.getSession({ headers: await headers() });
+
+    if (!session) return new Response("Unauthorized", { status: 401 });
+
+    // Check user's role server-side
+    const currentUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { role: true },
     });
+
+    if (!currentUser || currentUser.role !== "ADMIN") {
+      return new Response("Forbidden", { status: 403 });
+    }
 
     const users = await prisma.user.findMany({
       orderBy: {
@@ -29,9 +39,19 @@ export async function GET(req: Request) {
 }
 export async function DELETE(req: Request) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
+    const session = await auth.api.getSession({ headers: await headers() });
+
+    if (!session) return new Response("Unauthorized", { status: 401 });
+
+    // Only ADMIN can delete users
+    const currentUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { role: true },
     });
+
+    if (!currentUser || currentUser.role !== "ADMIN") {
+      return new Response("Forbidden", { status: 403 });
+    }
 
     const url = new URL(req.url);
     const userId = url.searchParams.get("userId");

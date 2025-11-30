@@ -1,11 +1,32 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AiOutlineCalendar } from "react-icons/ai";
 import { VscLocation } from "react-icons/vsc";
 import ItemModal from "../ItemModal";
 
-const role: "admin" | "user" = "admin";
+// detect whether current logged-in user is admin
+const useIsAdmin = () => {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    fetch("/api/user/me")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!mounted || !data) return;
+        setIsAdmin(data.role === "ADMIN");
+      })
+      .catch(() => setIsAdmin(false));
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  return isAdmin;
+};
 type ItemCardProps = {
   id: string;
   type: string;
@@ -27,6 +48,8 @@ const ItemCard = ({
   onDelete,
 }: ItemCardProps) => {
   const [openItem, setOpenItem] = useState(false);
+  const isAdmin = useIsAdmin();
+
   return (
     <>
       <div className="w-full sm:w-[30%] h-fit bg-[#EBECF1] rounded-lg shadow-md">
@@ -71,7 +94,7 @@ const ItemCard = ({
               </span>
             </div>
           </div>
-          {role === "admin" && (
+          {isAdmin && (
             <div className="p-2 bg-buttongreen rounded-full text-white font-semibold hover:bg-[#006557] cursor-pointer">
               <button className="cursor-pointer" onClick={() => onDelete(id)}>
                 Delete
