@@ -7,18 +7,22 @@ import ItemModal from "../ItemModal";
 
 const role: "admin" | "user" = "admin";
 type ItemCardProps = {
+  id: string;
   type: string;
   itemName: string;
   location: string;
   date: string;
   photoURL: string;
+  onDelete: (id: string) => void;
 };
 const ItemCard = ({
+  id,
   type,
   itemName,
   location,
   date,
   photoURL,
+  onDelete,
 }: ItemCardProps) => {
   const [openItem, setOpenItem] = useState(false);
   return (
@@ -67,7 +71,9 @@ const ItemCard = ({
           </div>
           {role === "admin" && (
             <div className="p-2 bg-buttongreen rounded-full text-white font-semibold hover:bg-[#006557] cursor-pointer">
-              <button className="cursor-pointer">Delete</button>
+              <button className="cursor-pointer" onClick={() => onDelete(id)}>
+                Delete
+              </button>
             </div>
           )}
         </div>

@@ -15,8 +15,7 @@ export default function HomeClientPage() {
         <Filter />
       </div>
       <div className="">
-        <ItemList type="Found" search={searchValue} />
-        <ItemList type="Lost" search={searchValue} />
+        <ItemList type="All" search={searchValue} />
       </div>
     </div>
   );
