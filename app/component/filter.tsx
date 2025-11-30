@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { TbUserEdit } from "react-icons/tb";
 import { VscAdd, VscMap } from "react-icons/vsc";
 // fetch current user role from backend
@@ -54,64 +53,6 @@ const Filter: React.FC<FilterProps> = ({
   const days = ["All", "1 day", "1 week", "1 month"];
 
   const isAdmin = useIsAdmin();
-
-  const router = useRouter();
-
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [passwordValue, setPasswordValue] = useState("");
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const ADMIN_PASSWORD = "admin123"; // per requirement
-
-  const onAdminClick = () => {
-    // Show modal to prompt for admin password
-    setPasswordValue("");
-    setPasswordError(null);
-    setShowPasswordModal(true);
-  };
-
-  const verifyAndEnterAdmin = () => {
-    if (passwordValue === ADMIN_PASSWORD) {
-      setShowPasswordModal(false);
-      router.push("/admin");
-    } else {
-      setPasswordError("Incorrect password");
-    }
-  };
-
-  const passwordModal = (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg p-6 w-[95%] max-w-md">
-        <h3 className="text-lg font-semibold mb-2">Enter Admin Password</h3>
-        <p className="text-sm text-gray-500 mb-4">You must enter the admin password to access the Admin area.</p>
-
-        <input
-          type="password"
-          className="w-full border px-3 py-2 rounded-md mb-2"
-          value={passwordValue}
-          onChange={(e) => setPasswordValue(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") verifyAndEnterAdmin();
-          }}
-        />
-        {passwordError && <div className="text-sm text-red-500 mb-2">{passwordError}</div>}
-
-        <div className="flex gap-2 justify-end">
-          <button
-            className="px-3 py-2 rounded-md bg-gray-200 hover:bg-gray-300"
-            onClick={() => setShowPasswordModal(false)}
-          >
-            Cancel
-          </button>
-          <button
-            className="px-3 py-2 rounded-md bg-buttongreen text-white hover:bg-[#006557]"
-            onClick={verifyAndEnterAdmin}
-          >
-            Enter
-          </button>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="w-full h-fit flex flex-wrap justify-between items-center gap-6 p-6">
@@ -175,12 +116,13 @@ const Filter: React.FC<FilterProps> = ({
           </button>
         </Link>
         {isAdmin && (
-          <button onClick={onAdminClick} className="flex flex-row gap-3 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer py-3 px-6">
-            <p className="text-white font-bold text-xl">Admin</p>
-            <TbUserEdit className="text-white font-extrabold w-7 h-7" />
-          </button>
+          <Link href="/admin">
+            <button className="flex flex-row gap-3 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer py-3 px-6">
+              <p className="text-white font-bold text-xl">Admin</p>
+              <TbUserEdit className="text-white font-extrabold w-7 h-7" />
+            </button>
+          </Link>
         )}
-        {showPasswordModal && passwordModal}
       </div>
     </div>
   );
