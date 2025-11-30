@@ -4,11 +4,30 @@ import React, { useState } from "react";
 import { TbUserEdit } from "react-icons/tb";
 import { VscAdd, VscMap } from "react-icons/vsc";
 const role: "admin" | "user" = "admin";
-const Filter = () => {
-  const [selectedType, setSelectedType] = useState("All");
-  const [selectedDay, setSelectedDay] = useState("1 Day");
+// controlled props are supported; falls back to internal state when not provided
+type FilterProps = {
+  selectedType?: "All" | "Lost" | "Found";
+  onTypeChange?: (t: "All" | "Lost" | "Found") => void;
+  selectedTime?: "All" | "1 day" | "1 week" | "1 month";
+  onTimeChange?: (t: "All" | "1 day" | "1 week" | "1 month") => void;
+};
+
+const Filter: React.FC<FilterProps> = ({
+  selectedType: controlledType,
+  onTypeChange,
+  selectedTime: controlledTime,
+  onTimeChange,
+}) => {
+  // fall back to internal state when used without control props
+  const [internalType, setInternalType] = useState<"All" | "Lost" | "Found">("All");
+  const [internalTime, setInternalTime] = useState<"All" | "1 day" | "1 week" | "1 month">("All");
+  const selectedType = controlledType ?? internalType;
+  const setSelectedType = onTypeChange ?? setInternalType;
+  const selectedTime = controlledTime ?? internalTime;
+  const setSelectedDay = onTimeChange ?? setInternalTime;
   const types = ["All", "Lost", "Found"];
-  const days = ["1 Day", "1 Week", "1 Month"];
+  // normalize days to match ItemList expected values (lowercase with spaces)
+  const days = ["All", "1 day", "1 week", "1 month"];
 
   return (
     <div className="w-full h-fit flex flex-wrap justify-between items-center gap-6 p-6">
@@ -25,7 +44,7 @@ const Filter = () => {
                     ? "bg-[#1A8A94] font-bold text-white shadow-lg underline"
                     : ""
                 }`}
-                onClick={() => setSelectedType(type)}
+                onClick={() => setSelectedType(type as "All" | "Lost" | "Found")}
               >
                 {type}
               </button>
@@ -40,13 +59,13 @@ const Filter = () => {
               <button
                 key={day}
                 className={`px-4 py-2 rounded-lg ${
-                  selectedDay === day
+                  selectedTime === day
                     ? "bg-[#1A8A94] font-bold text-white shadow-lg underline"
                     : ""
                 }`}
-                onClick={() => setSelectedDay(day)}
+                onClick={() => setSelectedDay(day as any)}
               >
-                {day}
+                {day === "All" ? "All" : day}
               </button>
             ))}
           </div>

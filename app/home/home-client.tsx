@@ -5,6 +5,8 @@ import Filter from "../component/filter";
 import ItemList from "../component/ItemList";
 
 export default function HomeClientPage() {
+  const [activeType, setActiveType] = useState<"All" | "Lost" | "Found">("All");
+  const [activeTime, setActiveTime] = useState<"1 day" | "1 week" | "1 month" | "All">("All");
   const [searchValue, setSearchValue] = useState("");
   return (
     <div className="min-h-screen w-full bg-lightgreen">
@@ -12,11 +14,15 @@ export default function HomeClientPage() {
         <Header onSearch={setSearchValue} />
       </div>
       <div>
-        <Filter />
+        <Filter
+          selectedType={activeType}
+          onTypeChange={setActiveType}
+          selectedTime={activeTime}
+          onTimeChange={setActiveTime}
+        />
       </div>
       <div className="">
-        <ItemList type="Found" search={searchValue} />
-        <ItemList type="Lost" search={searchValue} />
+        <ItemList type={activeType} time={activeTime} search={searchValue} />
       </div>
     </div>
   );
