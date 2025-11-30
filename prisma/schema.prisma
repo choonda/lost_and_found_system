@@ -120,7 +120,7 @@ model Item {
   location    String? // location where item was lost/found
   date        DateTime? // date when item was lost/found
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   claims     Claim[]
   foundItems FoundItem[]
@@ -147,8 +147,8 @@ model Claim {
   status    String   @default("pending") // pending, approved, rejected
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
-  item Item @relation(fields: [itemId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@index([userId, itemId, status])
   @@map("claim")

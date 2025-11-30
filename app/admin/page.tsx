@@ -15,8 +15,11 @@ const Founddata = [
 
 const AdminPage = () => {
   const [searchValue, setSearchValue] = useState("");
-  const [users, setUsers] = useState<{ name: string; email: string }[]>([]);
+  const [users, setUsers] = useState<
+    { id: string; name: string; email: string }[]
+  >([]);
 
+  // Fetch users
   useEffect(() => {
     fetch("/api/user")
       .then((res) => res.json())
@@ -24,14 +27,34 @@ const AdminPage = () => {
       .catch((err) => console.error("Failed to fetch users:", err));
   }, []);
 
+  const deleteUser = async (id: string) => {
+    if (!confirm("Are you sure you want to delele this user?")) {
+      return;
+    }
+    try {
+      const res = await fetch(`/api/user?userId=${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setUsers((prev) => prev.filter((users) => users.id !== id));
+      } else {
+        alert("Failed to delete user");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting user");
+    }
+  };
+
   const filteredUsers = users.filter((user) =>
     user.name.toLowerCase().includes(searchValue.toLowerCase())
   );
+
   return (
     <div className="min-h-screen w-full bg-lightgreen flex flex-col gap-4 p-4">
-      <div>
-        <Header onSearch={setSearchValue} />
-      </div>
+      <Header onSearch={setSearchValue} />
+
       <div className="flex flex-1 gap-4 px-4 min-h-[300px]">
         <div className="bg-[#FAFCFD] rounded-2xl flex-1 ">
           <OverviewChart
@@ -48,8 +71,9 @@ const AdminPage = () => {
           />
         </div>
       </div>
-      <div className="flex-1 bg-[#FAFCFD] rounded-2xl p-4 mx-4">
-        <Table data={filteredUsers} />
+
+      <div className="flex-1 bg-[#FAFCFD] rounded-2xl p-4 mx-4 relative">
+        <Table data={filteredUsers} onDelete={deleteUser} />
       </div>
     </div>
   );

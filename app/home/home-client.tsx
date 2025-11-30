@@ -6,7 +6,9 @@ import ItemList from "../component/ItemList";
 
 export default function HomeClientPage() {
   const [activeType, setActiveType] = useState<"All" | "Lost" | "Found">("All");
-  const [activeTime, setActiveTime] = useState<"1 day" | "1 week" | "1 month" | "All">("All");
+  const [activeTime, setActiveTime] = useState<
+    "1 day" | "1 week" | "1 month" | "All"
+  >("All");
   const [searchValue, setSearchValue] = useState("");
   return (
     <div className="min-h-screen w-full bg-lightgreen">
