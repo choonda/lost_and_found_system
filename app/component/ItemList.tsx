@@ -22,7 +22,7 @@ const ItemList = ({
   time = "All",
   search,
 }: {
-  type: "Lost" | "Found" | "All";
+  type: "Lost" | "Found" | "All" | "Role";
   time?: "1 day" | "1 week" | "1 month" | "All";
   search?: string;
 }) => {
