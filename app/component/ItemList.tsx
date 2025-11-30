@@ -19,19 +19,25 @@ type Item = {
 
 const ItemList = ({
   type,
+  time = "All",
   search,
 }: {
-  type: "Lost" | "Found" | "All" | "Role";
+  type: "Lost" | "Found" | "All";
+  time?: "1 day" | "1 week" | "1 month" | "All";
   search?: string;
 }) => {
   const [items, setItems] = useState<Item[]>([]);
 
   useEffect(() => {
     const fetchItems = async () => {
-      let url = "/api/items";
-      if (type !== "All") {
-        url += `?type=${type}`;
-      }
+      const params = new URLSearchParams();
+
+      if(type != "All") params.append("type", type);
+      if(time != "All") params.append("time", time);
+
+      const url = `/api/items?${params.toString()}`;
+      console.log("Fetching:", url);
+      
       const response = await fetch(url);
       const data = await response.json();
       setItems(data);
@@ -40,7 +46,7 @@ const ItemList = ({
 
     console.log("Fetching items of type:", type);
     fetchItems();
-  }, [type]);
+  }, [type, time]);
 
   const filtered = items.filter((item) =>
     item.name.toLowerCase().includes((search || "").toLowerCase())

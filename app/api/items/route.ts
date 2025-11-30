@@ -79,11 +79,11 @@ export async function POST(req: Request) {
       });
     }
 
-    if (
-      prisma.center.findUnique({
-        where: { id: parseInt(body.centerId, 10) },
-      }) === null
-    ) {
+    const center = await prisma.center.findUnique({
+      where: { id: parseInt(body.centerId, 10) },
+    });
+
+    if (!center) {
       return new Response("Invalid Center ID", { status: 400 });
     }
 
@@ -121,6 +121,18 @@ export async function GET(req: Request) {
 
   const url = new URL(req.url);
   const itemType: type = (url.searchParams.get("type") ?? "All") as type;
+  // support time filtering from query (values like: '1 day', '1 week', '1 month', 'All')
+  const timeQuery = (url.searchParams.get("time") ?? "All").toLowerCase();
+  let dateGte: Date | undefined;
+  if (timeQuery && timeQuery !== "all") {
+    if (timeQuery.includes("day")) {
+      dateGte = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000);
+    } else if (timeQuery.includes("week")) {
+      dateGte = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    } else if (timeQuery.includes("month")) {
+      dateGte = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    }
+  }
 
   if (!["Lost", "Found", "All", "Role"].includes(itemType)) {
     return new Response("Invalid item type", { status: 400 });
@@ -128,31 +140,25 @@ export async function GET(req: Request) {
 
   let items = [];
 
-  if (itemType === "All") {
-    items = await prisma.item.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-  } else if (itemType === "Role") {
-    items = await prisma.item.findMany({
-      where: {
-        userId: session.user.id,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-  } else {
-    items = await prisma.item.findMany({
-      where: {
-        type: itemType.toUpperCase() as "LOST" | "FOUND",
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+  // Build where clause once so time filtering applies across types
+  const where: any = {};
+  if (itemType === "Role") {
+    where.userId = session.user.id;
+  } else if (itemType !== "All") {
+    where.type = itemType.toUpperCase() as "LOST" | "FOUND";
   }
+  if (dateGte) {
+    // filter by the item's date (the event date), not the DB creation time
+    // items which have no `date` will be excluded by this filter
+    where.date = { gte: dateGte };
+  }
+
+  // sort: prefer item.date (event date) then fallback to createdAt
+  items = await prisma.item.findMany({
+    where,
+    orderBy: [{ date: "desc" }, { createdAt: "desc" }],
+  });
+  
 
   return new Response(JSON.stringify(items), { status: 200 });
 }
