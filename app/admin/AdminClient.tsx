@@ -4,18 +4,16 @@ import Header from "../component/header";
 import OverviewChart from "../component/OverviewChart";
 import Table from "../component/Table";
 
-const Lostdata = [
-  { name: "Pending", value: 400, fill: "#0088FE" },
-  { name: "Success", value: 200, fill: "#00C49F" },
-];
-const Founddata = [
-  { name: "Pending", value: 300, fill: "#FFBB28" },
-  { name: "Success", value: 500, fill: "#FF8042" },
-];
+type ChartDataItem = { name: string; value: number; fill: string };
+
 
 export default function AdminClient() {
   const [searchValue, setSearchValue] = useState("");
   const [users, setUsers] = useState<{ id: string; name: string; email: string }[]>([]);
+  const [lostData, setLostData] = useState<ChartDataItem[]>([]);
+  const [foundData, setFoundData] = useState<ChartDataItem[]>([]);
+  const [totalLost, setTotalLost] = useState<number>(0);
+  const [totalFound, setTotalFound] = useState<number>(0);
 
   // Fetch users
   useEffect(() => {
@@ -23,6 +21,24 @@ export default function AdminClient() {
       .then((res) => res.json())
       .then((data) => setUsers(data))
       .catch((err) => console.error("Failed to fetch users:", err));
+    // fetch admin stats for charts
+    fetch("/api/admin/stats")
+      .then(async (res) => {
+        if (!res.ok) {
+          const txt = await res.text().catch(() => "");
+          console.warn("failed to fetch admin stats", res.status, txt);
+          return null;
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (!data) return;
+        setLostData(data.lost ?? []);
+        setFoundData(data.found ?? []);
+        setTotalLost(data.totalLost ?? 0);
+        setTotalFound(data.totalFound ?? 0);
+      })
+      .catch((err) => console.error("Failed to fetch admin stats:", err));
   }, []);
 
   const deleteUser = async (id: string) => {
@@ -55,18 +71,10 @@ export default function AdminClient() {
 
       <div className="flex flex-1 gap-4 px-4 min-h-[300px]">
         <div className="bg-[#FAFCFD] rounded-2xl flex-1 ">
-          <OverviewChart
-            title="Lost Item Overview"
-            data={Lostdata}
-            totalCount={120}
-          />
+          <OverviewChart title="Lost Item Overview" data={lostData} totalCount={totalLost} />
         </div>
         <div className="bg-[#FAFCFD] rounded-2xl flex-1">
-          <OverviewChart
-            title="Found Item Overview"
-            data={Founddata}
-            totalCount={150}
-          />
+          <OverviewChart title="Found Item Overview" data={foundData} totalCount={totalFound} />
         </div>
       </div>
 

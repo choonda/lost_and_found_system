@@ -93,6 +93,7 @@ model Center {
   contact   String?
 
   foundItems FoundItem[]
+  claims     Claim[]
 
   @@map("center")
 }
@@ -145,12 +146,15 @@ model Claim {
   id        String   @id @default(uuid())
   userId    String
   itemId    String
-  status    String   @default("pending") // pending, approved, rejected
+  // centre referenced by integer id - make optional because not every claim will have a center
+  centerId  Int?
+  // status for the claim lifecycle (pending / approved / rejected). Keep as string for compatibility.
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item   Item    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  center Center? @relation(fields: [centerId], references: [id], onDelete: SetNull)
 
-  @@index([userId, itemId, status])
+  @@index([userId, itemId, centerId])
   @@map("claim")
 }

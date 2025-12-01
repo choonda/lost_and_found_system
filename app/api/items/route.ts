@@ -197,8 +197,14 @@ export async function GET(req: Request) {
   items = await prisma.item.findMany({
     where,
     orderBy: [{ date: "desc" }, { createdAt: "desc" }],
+    include: {
+      user: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
-  
 
   return new Response(JSON.stringify(items), { status: 200 });
 }
