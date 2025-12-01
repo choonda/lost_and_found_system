@@ -76,7 +76,7 @@ const FoundPage = () => {
           <Link href="/lostfound">
             <AiOutlineArrowLeft className="text-[#969DA3] w-8 h-8 font-semibold cursor-pointer" />
           </Link>
-          <h1 className="text-2xl text-[#969DA3]">REPORT</h1>
+          <h1 className="text-2xl text-[#969DA3]">FOUND</h1>
         </div>
         <div className="border-2  border-dashed border-[#B8B8B8] p-4 w-full h-fit rounded-md gap-2 flex flex-col">
           <div className="bg-white w-full h-fit p-4 rounded-md gap-4">

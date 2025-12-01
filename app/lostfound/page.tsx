@@ -12,13 +12,13 @@ const page = () => {
         <Link href="/lostfound/submit_lost">
           <SubmitCard
             icon={<BiSearchAlt className="text-black w-20 h-20" />}
-            title="Find"
+            title="Lost"
           />
         </Link>
         <Link href="/lostfound/submit_found">
           <SubmitCard
             icon={<TiShoppingBag className="text-black w-20 h-20" />}
-            title="Report"
+            title="Found"
           />
         </Link>
       </div>

@@ -15,6 +15,9 @@ type Item = {
   imageUrl: string;
   status: "LOOKING" | "FOUND" | "CLAIMED";
   createdAt: Date;
+  user: {
+    name: string;
+  };
 };
 
 const ItemList = ({
@@ -33,12 +36,12 @@ const ItemList = ({
     const fetchItems = async () => {
       const params = new URLSearchParams();
 
-      if(type != "All") params.append("type", type);
-      if(time != "All") params.append("time", time);
+      if (type != "All") params.append("type", type);
+      if (time != "All") params.append("time", time);
 
       const url = `/api/items?${params.toString()}`;
       console.log("Fetching:", url);
-      
+
       const response = await fetch(url);
       const data = await response.json();
       setItems(data);
@@ -84,6 +87,7 @@ const ItemList = ({
             key={item.id}
             id={item.id}
             type={item.type}
+            name={item.user.name}
             itemName={item.name}
             location={item.location || ""}
             photoURL={item.imageUrl}
@@ -100,7 +104,7 @@ const ItemList = ({
       {deleteMessage && (
         <div
           className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                  bg-green-300 text-white px-4 py-2 rounded shadow-md z-50"
+                  bg-buttongreen text-white px-4 py-2 rounded shadow-md z-50"
         >
           {deleteMessage}
         </div>

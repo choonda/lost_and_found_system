@@ -4,6 +4,7 @@ import { AiOutlineCalendar, AiOutlineClose } from "react-icons/ai";
 import { VscLocation } from "react-icons/vsc";
 
 type ItemModalProps = {
+  username: string;
   type: string;
   itemName: string;
   location: string;
@@ -14,6 +15,7 @@ type ItemModalProps = {
 };
 
 const ItemModal = ({
+  username,
   type,
   itemName,
   location,
@@ -26,7 +28,8 @@ const ItemModal = ({
     <div className=" fixed inset-0 bg-black/50 flex justify-center items-center z-50">
       <div className="bg-[#EBECF1] min-w-[30%] max-w-xl h-fit p-6 rounded-lg shadow-lg relative flex flex-col">
         {/* Close button */}
-        <div className="flex justify-end">
+        <div className="flex justify-between">
+          <p className="text-gray-500 text-sm">{username}</p>
           <button
             onClick={onClose}
             className="flex text-gray-500 text-2xl font-bold hover:text-black z-50"
