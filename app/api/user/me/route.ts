@@ -9,7 +9,8 @@ export async function GET(req: Request) {
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { id: true, name: true, email: true, image: true },
+    // include role so client components can check permissions
+    select: { id: true, name: true, email: true, image: true, role: true },
   });
 
   if (!user) return new Response("Not found", { status: 404 });
