@@ -115,6 +115,7 @@ model Item {
   name        String
   description String?
   imageUrl    String?
+  embedding   Unsupported("vector(768)")?
   status      ItemStatus
   createdAt   DateTime   @default(now())
   location    String? // location where item was lost/found
