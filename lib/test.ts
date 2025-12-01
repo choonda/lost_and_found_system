@@ -10,16 +10,9 @@ async function imageUrlToBase64(url: string): Promise<string> {
 async function processItems() {
   console.log("🔍 Fetching items missing embeddings...");
 
-  const items = await prisma.item.findMany({
-    where: {
-      embedding: null,
-      imageUrl: { not: null },
-    },
-    select: {
-      id: true,
-      imageUrl: true,
-    },
-  });
+  const items = await prisma.$queryRaw<
+    { id: string; imageUrl: string | null }[]
+  >`SELECT id, "imageUrl" FROM item WHERE embedding IS NULL AND "imageUrl" IS NOT NULL`;
 
   console.log(`Found ${items.length} items.`);
 
@@ -39,14 +32,12 @@ async function processItems() {
       const vectorString = `[${vector.join(",")}]`;
 
       // D. Store vector into Postgres `vector` column
-      await prisma.item.update({
-        where: {
-            id: item.id
-        },
-        data: {
-            embedding: vectorString,
-        }
-      })
+      await prisma.$executeRawUnsafe(
+      `UPDATE item SET embedding = $1 WHERE id = $2`,
+      vector,
+      item.id
+    );
+
 
       console.log(`✔️ Saved embedding for item ${item.id}`);
     } catch (err) {
