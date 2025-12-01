@@ -17,7 +17,7 @@ const OverviewChart = ({
 }: OverviewChartProps) => {
   return (
     <div className="w-full h-full flex flex-col px-2 py-4">
-      <p className="text-xl font-semibold mb-2">{title}</p>
+      <p className="text-xl font-semibold mb-2 text-black">{title}</p>
 
       <div className="flex-1 h-full w-full relative">
         <ResponsiveContainer width="100%" height="100%">
@@ -48,7 +48,7 @@ const OverviewChart = ({
 
         {/* Center number */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-          <span className="font-bold text-3xl">{totalCount}</span>
+          <span className="font-bold text-3xl text-black">{totalCount}</span>
         </div>
       </div>
     </div>
