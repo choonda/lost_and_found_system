@@ -15,6 +15,9 @@ type Item = {
   imageUrl: string;
   status: "LOOKING" | "FOUND" | "CLAIMED";
   createdAt: Date;
+  user: {
+    name: string;
+  };
 };
 
 const ItemList = ({
@@ -84,6 +87,7 @@ const ItemList = ({
             key={item.id}
             id={item.id}
             type={item.type}
+            name={item.user.name}
             itemName={item.name}
             location={item.location || ""}
             photoURL={item.imageUrl}
