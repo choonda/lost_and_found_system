@@ -17,6 +17,7 @@ type Item = {
   createdAt: Date;
   user: {
     name: string;
+    id: string;
   };
 };
 
@@ -81,25 +82,28 @@ const ItemList = ({
 
   return (
     <>
-      <div className="flex flex-wrap gap-15 p-8 items-center">
-        {filtered.map((item) => (
-          <ItemCard
-            key={item.id}
-            id={item.id}
-            type={item.type}
-            name={item.user.name}
-            itemName={item.name}
-            location={item.location || ""}
-            photoURL={item.imageUrl}
-            description={item.description || ""}
-            date={
-              item.createdAt
-                ? format(new Date(item.createdAt), "dd/MM HH:mm")
-                : ""
-            }
-            onDelete={deleteItem}
-          />
-        ))}
+      <div className="flex flex-wrap gap-6 p-8 items-center">
+        {filtered.map((item) => {
+          return (
+            <ItemCard
+              key={item.id}
+              id={item.id}
+              type={item.type}
+              name={item.user.name}
+              userId={item.user.id}
+              itemName={item.name}
+              location={item.location || ""}
+              photoURL={item.imageUrl}
+              description={item.description || ""}
+              date={
+                item.createdAt
+                  ? format(new Date(item.createdAt), "dd/MM HH:mm")
+                  : ""
+              }
+              onDelete={deleteItem}
+            />
+          );
+        })}
       </div>
       {deleteMessage && (
         <div

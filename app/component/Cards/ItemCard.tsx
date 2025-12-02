@@ -27,8 +27,11 @@ const useIsAdmin = () => {
 
   return isAdmin;
 };
+
 type ItemCardProps = {
   id: string;
+  userId: string;
+
   type: string;
   name: string;
   itemName: string;
@@ -40,6 +43,8 @@ type ItemCardProps = {
 };
 const ItemCard = ({
   id,
+  userId,
+
   type,
   name,
   itemName,
@@ -107,6 +112,8 @@ const ItemCard = ({
       </div>
       {openItem && (
         <ItemModal
+          userId={userId}
+          itemId={id}
           username={name}
           type={type}
           itemName={itemName}
