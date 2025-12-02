@@ -79,6 +79,35 @@ export async function findSimilarItemsByImage(base64Image: string) {
   return { description, similarItems: items };
 }
 
+//sensesitive content filter
+export async function filterSensitiveContent(userQuery: string): Promise<boolean> {
+  const vector = await generateEmbedding(userQuery);
+  const vectorString = `[${vector.join(",")}]`;
+
+  const model = 'gemini-2.5-flash';
+  const prompt = `
+    You are a content moderation AI. 
+    Analyze the following user query for sensitive or inappropriate content.
+    If the content is safe, respond with "SAFE". 
+    If it contains sensitive content, respond with "SENSITIVE".
+    User query: "${userQuery}"
+  `;
+
+  const result = await genAI.models.generateContent({
+    model: model,
+    contents: [{text: prompt}]
+  });
+
+  const response = result.text?.trim().toUpperCase();
+  if(response === "SENSITIVE") {
+    return true;
+  } else if(response === "SAFE") {
+    return false;
+  } else {
+    throw new Error("Unexpected response from content filter");
+  }
+}
+
 //AI Chat box
 export async function chatWithAI(userQuery: string) {
 
