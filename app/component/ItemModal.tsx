@@ -78,11 +78,11 @@ const ItemModal = ({
           <p>{description}</p>
         </div>
 
-        <div className="bg-buttongreen p-4 flex items-center justify-center rounded-2xl cursor-pointer">
-          <button
-            className="text-white font-bold cursor-pointer "
-            onClick={() => setShowQR(true)}
-          >
+        <div
+          className="bg-buttongreen p-4 flex items-center justify-center rounded-2xl cursor-pointer"
+          onClick={() => setShowQR(true)}
+        >
+          <button className="text-white font-bold cursor-pointer ">
             Claim
           </button>
         </div>
