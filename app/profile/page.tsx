@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
 import { VscAccount } from "react-icons/vsc";
@@ -9,22 +9,33 @@ import { signOut } from "@/lib/actions/auth-actions";
 import Link from "next/link";
 import ItemList from "../component/ItemList";
 
-const user = {
-  username: "User123",
-  email: "User123@gmail.com",
-};
-
-const handleSave = (newUsername: string, newEmail: string) => {
-  console.log("Updated data:", newUsername, newEmail);
-};
-
 const ProfilePage = () => {
   const router = useRouter();
+  const [user, setUser] = useState<any>();
+
+async function loadUser() {
+    const res = await fetch("/api/user/me");
+    const data = await res.json();
+        console.log("user data:", data);
+    setUser(data);
+  }
+
+  useEffect(() => {
+    loadUser();
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();
     router.push("/auth");
   };
+
+  if (!user)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>  
+    );
+
   return (
     <div className="min-h-screen w-full bg-lightgreen flex flex-col gap-12 p-8">
       <div className="flex flex-row justify-between">
@@ -42,12 +53,13 @@ const ProfilePage = () => {
       </div>
       <div className="flex flex-col gap-4 p-4">
         <div className="w-full items-center flex flex-col gap-4  ">
-          <VscAccount className="w-30 h-30 text-primarygreen bg-white rounded-full" />
+          
           <div className="w-full">
             <UserProfile
-              username={user.username}
+              username={user.name}
               email={user.email}
-              onSave={handleSave}
+              image={user.image}
+              onProfileUpdated={(updated) => setUser(updated)}
             />
           </div>
         </div>
