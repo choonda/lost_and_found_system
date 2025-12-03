@@ -82,7 +82,7 @@ const ItemList = ({
 
   return (
     <>
-      <div className="flex flex-wrap gap-8 p-8 ml-4  items-center w-full justify-left">
+      <div className="flex flex-wrap gap-8 p-8 items-center w-full justify-left sm:ml-4">
         {filtered.map((item) => {
           return (
             <ItemCard
