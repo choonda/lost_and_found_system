@@ -6,10 +6,11 @@ import Table from "../component/Table";
 
 type ChartDataItem = { name: string; value: number; fill: string };
 
-
 export default function AdminClient() {
   const [searchValue, setSearchValue] = useState("");
-  const [users, setUsers] = useState<{ id: string; name: string; email: string }[]>([]);
+  const [users, setUsers] = useState<
+    { id: string; name: string; email: string }[]
+  >([]);
   const [lostData, setLostData] = useState<ChartDataItem[]>([]);
   const [foundData, setFoundData] = useState<ChartDataItem[]>([]);
   const [totalLost, setTotalLost] = useState<number>(0);
@@ -66,15 +67,23 @@ export default function AdminClient() {
   );
 
   return (
-    <div className="min-h-screen w-full bg-lightgreen flex flex-col gap-4 p-4">
+    <div className="min-h-screen w-full bg-lightgreen flex flex-col gap-4 px-4 py-2">
       <Header onSearch={setSearchValue} />
 
       <div className="flex flex-1 gap-4 px-4 min-h-[300px]">
         <div className="bg-[#FAFCFD] rounded-2xl flex-1 ">
-          <OverviewChart title="Lost Item Overview" data={lostData} totalCount={totalLost} />
+          <OverviewChart
+            title="Lost Overview"
+            data={lostData}
+            totalCount={totalLost}
+          />
         </div>
         <div className="bg-[#FAFCFD] rounded-2xl flex-1">
-          <OverviewChart title="Found Item Overview" data={foundData} totalCount={totalFound} />
+          <OverviewChart
+            title="Found Overview"
+            data={foundData}
+            totalCount={totalFound}
+          />
         </div>
       </div>
 

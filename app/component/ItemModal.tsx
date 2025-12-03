@@ -1,9 +1,13 @@
+"use client";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { AiOutlineCalendar, AiOutlineClose } from "react-icons/ai";
 import { VscLocation } from "react-icons/vsc";
+import QRGenerator from "./QRGenerator";
 
 type ItemModalProps = {
+  userId: string;
+  itemId: string;
   username: string;
   type: string;
   itemName: string;
@@ -15,6 +19,8 @@ type ItemModalProps = {
 };
 
 const ItemModal = ({
+  userId,
+  itemId,
   username,
   type,
   itemName,
@@ -24,9 +30,15 @@ const ItemModal = ({
   description,
   onClose,
 }: ItemModalProps) => {
+  const [showQR, setShowQR] = useState(false);
   return (
-    <div className=" fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-      <div className="bg-[#EBECF1] min-w-[30%] max-w-xl h-fit p-6 rounded-lg shadow-lg relative flex flex-col">
+    <div className=" fixed inset-0 bg-black/50 flex flex-col justify-center items-center z-50">
+      <div
+        className="bg-[#EBECF1] 
+          sm:max-w-[90%] 
+          md:max-w-[60%] 
+          lg:max-w-[30%] w-full  max-h-[90vh] overflow-y-auto p-6 rounded-lg shadow-lg relative flex flex-col"
+      >
         {/* Close button */}
         <div className="flex justify-between">
           <p className="text-gray-500 text-sm">{username}</p>
@@ -39,7 +51,7 @@ const ItemModal = ({
         </div>
 
         {/* ITEM IMAGE */}
-        <div className="relative w-full h-120 mb-4">
+        <div className="relative w-full overflow-hidden h-72 mb-4">
           <Image
             src={
               photoURL ||
@@ -47,7 +59,7 @@ const ItemModal = ({
             }
             alt={itemName}
             fill
-            className="h-fit w-full object-fill rounded-lg"
+            className="object-fill rounded-lg"
           />
           <div className="absolute bottom-2 left-2 bg-white px-4 py-1 rounded-full text-black font-semibold shadow">
             {type}
@@ -67,9 +79,25 @@ const ItemModal = ({
           </div>
         </div>
 
-        <div className="mt-4 text-gray-700">
+        <div className="mt-4 text-gray-700 max-h-32  pr-2">
           <p>{description}</p>
         </div>
+
+        <div
+          className="bg-buttongreen p-4 flex items-center justify-center rounded-2xl cursor-pointer"
+          onClick={() => setShowQR(true)}
+        >
+          <button className="text-white font-bold cursor-pointer ">
+            Claim
+          </button>
+        </div>
+        {showQR && (
+          <QRGenerator
+            userId={userId}
+            itemId={itemId}
+            onCloseQR={() => setShowQR(false)}
+          />
+        )}
       </div>
     </div>
   );

@@ -3,7 +3,10 @@ import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { TbUserEdit } from "react-icons/tb";
 import { VscAdd, VscMap } from "react-icons/vsc";
+import QRScanner from "../component/QRScanner";
+import { AiOutlineQrcode } from "react-icons/ai";
 // fetch current user role from backend
+
 const useIsAdmin = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -42,8 +45,12 @@ const Filter: React.FC<FilterProps> = ({
   onTimeChange,
 }) => {
   // fall back to internal state when used without control props
-  const [internalType, setInternalType] = useState<"All" | "Lost" | "Found">("All");
-  const [internalTime, setInternalTime] = useState<"All" | "1 day" | "1 week" | "1 month">("All");
+  const [internalType, setInternalType] = useState<"All" | "Lost" | "Found">(
+    "All"
+  );
+  const [internalTime, setInternalTime] = useState<
+    "All" | "1 day" | "1 week" | "1 month"
+  >("All");
   const selectedType = controlledType ?? internalType;
   const setSelectedType = onTypeChange ?? setInternalType;
   const selectedTime = controlledTime ?? internalTime;
@@ -53,7 +60,7 @@ const Filter: React.FC<FilterProps> = ({
   const days = ["All", "1 day", "1 week", "1 month"];
 
   const isAdmin = useIsAdmin();
-
+  const [isQRopen, setIsQRopen] = useState(false);
   return (
     <div className="w-full h-fit flex flex-wrap justify-between items-center gap-6 p-6">
       {/* LEFT FILTER GROUP */}
@@ -69,7 +76,9 @@ const Filter: React.FC<FilterProps> = ({
                     ? "bg-[#1A8A94] font-bold text-white shadow-lg underline"
                     : ""
                 }`}
-                onClick={() => setSelectedType(type as "All" | "Lost" | "Found")}
+                onClick={() =>
+                  setSelectedType(type as "All" | "Lost" | "Found")
+                }
               >
                 {type}
               </button>
@@ -123,7 +132,21 @@ const Filter: React.FC<FilterProps> = ({
             </button>
           </Link>
         )}
+        {isAdmin && (
+          <button
+            className="flex flex-row gap-3 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer py-3 px-6"
+            onClick={() => setIsQRopen(true)}
+          >
+            <p className="text-white font-bold text-xl">QRScan</p>
+            <AiOutlineQrcode className="text-white font-extrabold w-7 h-7" />
+          </button>
+        )}
       </div>
+      {isQRopen && (
+        <div>
+          <QRScanner centerId="2" onClose={() => setIsQRopen(false)} />
+        </div>
+      )}
     </div>
   );
 };

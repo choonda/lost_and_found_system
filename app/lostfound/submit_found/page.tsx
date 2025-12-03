@@ -19,16 +19,20 @@ import InputField from "@/app/component/Form/InputField";
 const FoundPage = () => {
   const router = useRouter();
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   type FormValues = z.infer<typeof ItemCreateFormSchema>;
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting: formIsSubmitting },
     watch,
   } = useForm({
     resolver: zodResolver(ItemCreateFormSchema),
   });
+  useEffect(() => {
+    setIsSubmitting(formIsSubmitting);
+  }, [formIsSubmitting]);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     console.log("Submission Success:", data.name);
@@ -172,9 +176,23 @@ const FoundPage = () => {
             )}
           </label>
         </div>
-        <div className="w-fit h-fit px-8 py-4 bg-buttongreen rounded-full cursor-pointer hover:bg-[#006557]">
-          <button className="cursor-pointer" type="submit">
-            <p className="text-white text-md">Submit</p>
+        <div
+          className={`w-fit h-fit px-8 py-4 bg-buttongreen rounded-full  ${
+            isSubmitting
+              ? "bg-gray-300"
+              : "cursor-pointer hover:bg-[#006557] bg-buttongreen "
+          }`}
+        >
+          <button
+            className="cursor-pointer"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <p className="text-white text-md">Submitting...</p>
+            ) : (
+              <p className="text-white text-md">Submit</p>
+            )}
           </button>
         </div>
       </div>

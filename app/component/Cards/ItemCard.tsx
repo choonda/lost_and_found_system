@@ -27,8 +27,11 @@ const useIsAdmin = () => {
 
   return isAdmin;
 };
+
 type ItemCardProps = {
   id: string;
+  userId: string;
+
   type: string;
   name: string;
   itemName: string;
@@ -40,6 +43,8 @@ type ItemCardProps = {
 };
 const ItemCard = ({
   id,
+  userId,
+
   type,
   name,
   itemName,
@@ -54,7 +59,7 @@ const ItemCard = ({
 
   return (
     <>
-      <div className="w-full sm:w-[30%] h-fit bg-[#EBECF1] rounded-lg shadow-md">
+      <div className="w-full sm:w-[31%] h-fit bg-[#EBECF1] rounded-lg shadow-md">
         {/* UPPER */}
 
         <div className="relative" onClick={() => setOpenItem(true)}>
@@ -107,6 +112,8 @@ const ItemCard = ({
       </div>
       {openItem && (
         <ItemModal
+          userId={userId}
+          itemId={id}
           username={name}
           type={type}
           itemName={itemName}

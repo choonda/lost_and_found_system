@@ -5,7 +5,7 @@ import MapComponent from "../component/MapComponent";
 
 const MapPage = async () => {
   const stations = await prisma.center.findMany({
-    select: { id: true, name: true, longitude: true, latitude: true },
+    select: { id: true, longitude: true, latitude: true },
   });
 
   const validStations = stations.filter(

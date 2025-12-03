@@ -56,7 +56,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ stations }) => {
             lat: Number(station.latitude),
             lng: Number(station.longitude),
           }}
-          label={station.name}
         />
       ))}
     </GoogleMap>
