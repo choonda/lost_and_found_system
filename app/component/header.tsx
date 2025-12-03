@@ -1,11 +1,31 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { VscAccount } from "react-icons/vsc";
 
+interface User{
+  image?: string;
+}
+
 const Header = ({ onSearch }: { onSearch: (v: string) => void }) => {
+  const [user,setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    fetch("/api/user/me")
+    .then((res) => res.ok ? res.json() : null)
+    .then((data) => {
+      if (mounted && data) setUser(data);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <div
       className="
@@ -50,7 +70,14 @@ const Header = ({ onSearch }: { onSearch: (v: string) => void }) => {
         {/* USER */}
         <Link href="/profile" className="flex items-center gap-2 ">
           <button className="flex-none cursor-pointer">
-            <VscAccount className="w-10 h-10 text-primarygreen bg-white rounded-full" />
+            {user?.image ? (
+              <img
+                src={user.image}
+                className="w-10 h-10 rounded-full border"
+              />
+            ) : (
+              <VscAccount className="w-10 h-10 text-primarygreen" />
+            )}
           </button>
         </Link>
       </div>
