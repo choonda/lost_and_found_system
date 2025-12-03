@@ -84,23 +84,7 @@ export async function POST(req: Request) {
     return new Response("Invalid item type", { status: 400 });
   }
 
-  const contentForFilter = `${body.name} ${body.location} ${body.description}`;
-  const isSensitive = await filterSensitiveContent(contentForFilter);
-
-  console.log("Content Sensitivity Check:", isSensitive);
-  console.log("Content Checked:", contentForFilter);
-
-  if (isSensitive) {
-    console.warn(
-      "Item creation blocked due to sensitive content in: name, location, or image description."
-    );
-    return new Response(
-      "Item content is flagged as sensitive. Please revise.",
-      { status: 403 }
-    );
-  }
-
-  const itemData: Prisma.ItemCreateInput = {
+  const itemData: Prisma.ItemCreateArgs["data"] = {
     user: {
       connect: { id: session.user.id },
     },
