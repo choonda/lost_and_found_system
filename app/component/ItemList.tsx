@@ -90,6 +90,7 @@ const ItemList = ({
               id={item.id}
               type={item.type}
               name={item.user.name}
+              status={item.status}
               userId={item.user.id}
               itemName={item.name}
               location={item.location || ""}
