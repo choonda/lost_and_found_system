@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     return new Response("Invalid item type", { status: 400 });
   }
 
-  const itemData: Prisma.ItemCreateInput = {
+  const itemData: Prisma.ItemCreateArgs['data'] = {
     user: {
       connect: { id: session.user.id },
     },
