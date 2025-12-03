@@ -327,15 +327,15 @@ const LostPage = () => {
             ) : (
               <p className="text-white text-md">Submit</p>
             )}
-            </button>
+          </button>
+        </div>
 
         {/* Sensitive content error */}
         {sensitiveError && (
           <p className="text-red-600 mt-2">{sensitiveError}</p>
         )}
-
-       
       </div>
+
       {isOpenModal && (
         <FindSimilarModal
           isOpen={isOpenModal}

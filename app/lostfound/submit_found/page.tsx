@@ -114,7 +114,7 @@ const FoundPage = () => {
         );
         // clear fields so user must re-enter
         reset(
-          { name: "", location: "", date: "", description: "" },
+          { name: "", location: "", date: undefined, description: "" },
           { keepErrors: false, keepDirty: false }
         );
         setPhotoPreview(null);
@@ -313,14 +313,13 @@ const FoundPage = () => {
             ) : (
               <p className="text-white text-md">Submit</p>
             )}
-            </button>
+          </button>
+        </div>
 
         {/* Sensitive content error */}
         {sensitiveError && (
           <p className="text-red-600 mt-2">{sensitiveError}</p>
         )}
-
-       
       </div>
       {isOpenModal && (
         <FindSimilarModal

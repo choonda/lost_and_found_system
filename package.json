@@ -29,7 +29,6 @@
     "react-qr-code": "^2.0.18",
     "react-zxing": "^2.1.0",
     "recharts": "^3.5.1",
-      
     "sharp": "^0.34.5",
     "uploadthing": "^7.7.4",
     "zod": "^4.1.13"
