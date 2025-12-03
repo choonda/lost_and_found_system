@@ -59,7 +59,7 @@ const ItemCard = ({
 
   return (
     <>
-      <div className="w-full sm:w-[30%] h-fit bg-[#EBECF1] rounded-lg shadow-md">
+      <div className="w-full sm:w-[31%] h-fit bg-[#EBECF1] rounded-lg shadow-md">
         {/* UPPER */}
 
         <div className="relative" onClick={() => setOpenItem(true)}>
