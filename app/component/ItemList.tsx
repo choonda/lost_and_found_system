@@ -3,55 +3,114 @@
 import React, { useEffect, useState } from "react";
 import ItemCard from "./Cards/ItemCard";
 
+import { format } from "date-fns";
+
 type Item = {
-  id: number;
-  type: "Lost" | "Found";
-  title: string;
-  lostLocation?: string;
-  foundLocation?: string;
-  lostDate?: string;
-  foundDate?: string;
-  imageURL: string;
+  id: string;
+  type: "Lost" | "Found" | "All";
+  name: string;
+  location?: string;
+  description?: string;
+  date?: Date;
+  imageUrl: string;
+  status: "LOOKING" | "FOUND" | "CLAIMED";
+  createdAt: Date;
+  user: {
+    name: string;
+  };
 };
 
-const ItemList = ({ type }: { type: "Lost" | "Found" }) => {
+const ItemList = ({
+  type,
+  time = "All",
+  search,
+}: {
+  type: "Lost" | "Found" | "All" | "Role";
+  time?: "1 day" | "1 week" | "1 month" | "All";
+  search?: string;
+}) => {
   const [items, setItems] = useState<Item[]>([]);
-  const apiEndpoint = type === "Lost" ? "/api/lost-items" : "api/found-items";
+  const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(apiEndpoint)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Fetched items:", data);
-        const mappedItems = data.map((item: any) => ({
-          id: item.id,
-          type: type,
-          title: item.title,
-          lostLocation: item.lostLocation,
-          foundLocation: item.foundLocation,
-          lostDate: item.createdAt,
-          foundDate: item.createdAt,
-          imageURL: item.imageUrl,
-        }));
-        setItems(mappedItems);
-      })
-      .catch((err) => console.error("Failed to fetch items:", err));
-  }, [apiEndpoint, type]);
+    const fetchItems = async () => {
+      const params = new URLSearchParams();
+
+      if (type != "All") params.append("type", type);
+      if (time != "All") params.append("time", time);
+
+      const url = `/api/items?${params.toString()}`;
+      console.log("Fetching:", url);
+
+      const response = await fetch(url);
+      const data = await response.json();
+      setItems(data);
+      console.log("Fetched items:", data);
+    };
+
+    console.log("Fetching items of type:", type);
+    fetchItems();
+  }, [type, time]);
+
+  const deleteItem = async (id: string) => {
+    if (!confirm("Are you sure you want to delele this item?")) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/items?itemId=${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setItems((prev) => prev.filter((items) => items.id !== id));
+        setDeleteMessage("Item deleted successfully!");
+        setTimeout(() => setDeleteMessage(null), 2000);
+      } else {
+        alert("Failed to delete item");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting item");
+    }
+  };
+
+  const filtered = items.filter((item) =>
+    item.name.toLowerCase().includes((search || "").toLowerCase())
+  );
 
   return (
-    <div className="flex flex-wrap gap-15 p-8 items-center justify-between">
-      {items.map((item) => (
-        <ItemCard
-          key={item.id}
-          type={item.type}
-          itemName={item.title}
-          date={item.lostDate || item.foundDate || ""}
-          location={item.lostLocation || item.foundLocation || ""}
-          photoURL={item.imageURL}
-        />
-      ))}
-    </div>
-  )
+    <>
+      <div className="flex flex-wrap gap-15 p-8 items-center">
+        {filtered.map((item) => (
+          <ItemCard
+            key={item.id}
+            id={item.id}
+            type={item.type}
+            name={item.user.name}
+            itemName={item.name}
+            location={item.location || ""}
+            photoURL={item.imageUrl}
+            description={item.description || ""}
+            date={
+              item.createdAt
+                ? format(new Date(item.createdAt), "dd/MM HH:mm")
+                : ""
+            }
+            onDelete={deleteItem}
+          />
+        ))}
+      </div>
+      {deleteMessage && (
+        <div
+          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+                  bg-buttongreen text-white px-4 py-2 rounded shadow-md z-50"
+        >
+          {deleteMessage}
+        </div>
+      )}
+    </>
+  );
 };
 
 export default ItemList;

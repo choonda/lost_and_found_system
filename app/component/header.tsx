@@ -1,10 +1,11 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { VscAccount } from "react-icons/vsc";
 
-const Header = () => {
+const Header = ({ onSearch }: { onSearch: (v: string) => void }) => {
   return (
     <div
       className="
@@ -17,13 +18,15 @@ const Header = () => {
 "
     >
       {/* ICON */}
-      <div className=" items-center gap-2 sm:flex sm:flex-none">
-        <Image src="/0nce.png" alt="logo" width={50} height={50} />
-        <div className="font-semibold text-4xl flex flex-row">
-          <h1 className="text-primarygreen">0</h1>
-          <h1 className="text-primarygreen/50">nce</h1>
+      <Link href="/home">
+        <div className=" items-center gap-2 sm:flex sm:flex-none flex">
+          <Image src="/0nce.png" alt="logo" width={50} height={50} />
+          <div className="font-semibold text-4xl flex flex-row">
+            <h1 className="text-primarygreen">0</h1>
+            <h1 className="text-primarygreen/50">nce</h1>
+          </div>
         </div>
-      </div>
+      </Link>
 
       <div className="flex flex-1 flex-row items-center gap-4 md:gap-16 justify-between w-full">
         {/* SEARCH BAR */}
@@ -34,6 +37,9 @@ const Header = () => {
               className="flex-1 min-w-0 focus:outline-none placeholder-gray-400 text-base"
               type="text"
               placeholder="Find something..."
+              onChange={(e) => {
+                onSearch(e.target.value);
+              }}
             />
             <button className="bg-buttongreen rounded-full py-2 px-5 flex-none hover:bg-[#006557] cursor-pointer">
               <p className="font-semibold text-white">Search</p>
@@ -42,9 +48,11 @@ const Header = () => {
         </div>
 
         {/* USER */}
-        <button className="flex-none">
-          <VscAccount className="w-10 h-10 text-primarygreen bg-white rounded-full" />
-        </button>
+        <Link href="/profile" className="flex items-center gap-2 ">
+          <button className="flex-none cursor-pointer">
+            <VscAccount className="w-10 h-10 text-primarygreen bg-white rounded-full" />
+          </button>
+        </Link>
       </div>
     </div>
   );

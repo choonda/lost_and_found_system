@@ -1,42 +1,88 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import InputField from "@/app/component/Form/InputField";
-import { FormSchema } from "@/lib/validation/InputSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
+
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { RiFolderUploadLine } from "react-icons/ri";
 
+import { ItemCreateFormSchema } from "@/lib/validation/InputSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
+
+import InputField from "@/app/component/Form/InputField";
+
 const LostPage = () => {
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const router = useRouter();
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+
+  type FormValues = z.infer<typeof ItemCreateFormSchema>;
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
+    reset, //reset for handling sensitive content
   } = useForm({
-    resolver: zodResolver(FormSchema),
+    resolver: zodResolver(ItemCreateFormSchema),
   });
 
-  const onSubmit = async (data: any) => {
-    console.log("Submission Success:", data);
-    const response = await fetch("/api/lost-items", {
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    console.log("Submission Success:", data.name);
+
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("location", data.location ?? "");
+    // formData.append("description", data.description ?? "");
+    formData.append("date", data.date ? data.date.toISOString() : "");
+    formData.append("type", "Lost");
+    formData.append("centerId", "1");
+    if (data.photo && data.photo[0]) {
+      formData.append("photo", data.photo[0]);
+    }
+
+    console.log("Submission Success:", formData);
+
+    const response = await fetch("/api/items", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+      body: formData,
     });
+
+    // 👇 UPDATED RESPONSE HANDLING LOGIC
+    if (response.status === 403) {
+      const errorMessage = await response.text();
+      alert(`Submission Blocked: ${errorMessage} Please revise the Name and Location.`);
+      
+      // 1. Clear text/date fields using react-hook-form's reset
+      reset({
+        name: "",
+        location: "",
+        date: "",
+        // Note: You generally don't reset the file input using react-hook-form's reset
+      }, {
+        keepErrors: true, // Keep validation errors if they exist
+        keepDirty: false,
+        keepTouched: false,
+        keepValues: false
+      });
+
+      // 2. Clear the photo preview state separately
+      setPhotoPreview(null);
+      
+      return; // Stop execution here
+    }
+
     if (response?.status !== 200) {
       alert("Failed to submit the form. Please try again.");
       return;
     }
+
     alert("Form submitted successfully!");
+
     router.push("/home");
   };
 
@@ -55,15 +101,15 @@ const LostPage = () => {
           <Link href="/lostfound">
             <AiOutlineArrowLeft className="text-[#969DA3] w-8 h-8 font-semibold cursor-pointer" />
           </Link>
-          <h1 className="text-2xl text-[#969DA3]">FIND</h1>
+          <h1 className="text-2xl text-[#969DA3]">LOST</h1>
         </div>
         <div className="border-2  border-dashed border-[#B8B8B8] p-4 w-full h-fit rounded-md gap-2 flex flex-col">
           <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
             <InputField
               label="Item Name"
               placeholder="item name"
-              {...register("itemName")}
-              error={errors.itemName?.message}
+              {...register("name")}
+              error={errors.name?.message}
             />
           </div>
           <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
@@ -80,7 +126,7 @@ const LostPage = () => {
             </div>
             <div className="w-full  bg-[#E6F6F4] rounded-md flex">
               <input
-                className={`w-full flex flex-row items-center gap-5 h-fit px-4 py-2 focus:ring-[#b0e4dd] focus:ring-2 focus:outline-none transition-all duration-200 `}
+                className={`w-full flex flex-row placeholder-[#808080] items-center gap-5 h-fit px-4 py-2 focus:ring-[#b0e4dd] focus:ring-2 focus:outline-none transition-all duration-200 `}
                 type="date"
                 {...register("date")}
               />
@@ -91,13 +137,13 @@ const LostPage = () => {
               </p>
             )}
           </div>
-          <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
+          {/* <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
             <InputField
               label="Description"
               placeholder="description"
               {...register("description")}
             />
-          </div>
+          </div> */}
         </div>
         <div className="bg-white p-4 items-center rounded-xl">
           <label
