@@ -37,7 +37,7 @@ const ItemModal = ({
         className="bg-[#EBECF1] 
           sm:max-w-[90%] 
           md:max-w-[60%] 
-          lg:max-w-[30%] w-full  max-h-[90vh] overflow-y-auto p-6 rounded-lg shadow-lg relative flex flex-col"
+          lg:max-w-[30%] w-full  h-full overflow-y-auto p-6 rounded-lg shadow-lg relative flex flex-col"
       >
         {/* Close button */}
         <div className="flex justify-between">
@@ -79,7 +79,7 @@ const ItemModal = ({
           </div>
         </div>
 
-        <div className="mt-4 text-gray-700 max-h-32  pr-2">
+        <div className="mt-4 text-gray-700 max-h-32  pr-2 overflow-auto">
           <p>{description}</p>
         </div>
 
