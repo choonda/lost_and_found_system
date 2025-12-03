@@ -26,18 +26,18 @@ const ProfilePage = () => {
     router.push("/auth");
   };
   return (
-    <div className="min-h-screen w-full bg-lightgreen flex flex-col gap-12 p-8">
+    <div className="min-h-screen w-full bg-lightgreen flex flex-col gap-12 p-4 sm:p-8">
       <div className="flex flex-row justify-between">
         <Link href="/home">
-          <AiOutlineArrowLeft className="text-[#969DA3] w-8 h-8 font-semibold cursor-pointer" />
+          <AiOutlineArrowLeft className="text-[#969DA3] w-7 h-7 sm:w-8 sm:h-8 font-semibold cursor-pointer" />
         </Link>
-        <h1 className="text-2xl text-[#969DA3] ml-28">PROFILE</h1>
+        <h1 className="text-2xl sm:text-md text-[#969DA3] ml-28">PROFILE</h1>
         <div
           className="flex gap-2 items-center cursor-pointer "
           onClick={handleSignOut}
         >
-          <BiLogOut className="w-8 h-8 text-red-500" />
-          <p className="text-2xl text-red-500">LOGOUT</p>
+          <BiLogOut className="w-6 h-6 sm:w-8 sm:h-8 text-red-500" />
+          <p className="text-md sm:text-xl text-red-500">LOGOUT</p>
         </div>
       </div>
       <div className="flex flex-col gap-4 p-4">

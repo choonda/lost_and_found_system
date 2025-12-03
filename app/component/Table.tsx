@@ -16,7 +16,7 @@ const Table = ({ data, onDelete }: TableProps) => {
       <thead className=" py-2 text-left">
         <tr className="">
           <th className="p-1">Name</th>
-          <th className="p-1">Email</th>
+          <th className="p-1 hidden sm:table-cell">Email</th>
           <th className="p-1">Action</th>
         </tr>
       </thead>
@@ -27,7 +27,9 @@ const Table = ({ data, onDelete }: TableProps) => {
             className={`odd:bg-[#E6F6F4] even:bg-[#b0e4dd] rounded-xl hover:bg-black/10 transition-colors`}
           >
             <td className="p-1 text-[#808080]">{row.name}</td>
-            <td className="p-1 text-[#808080]">{row.email}</td>
+            <td className="p-1 text-[#808080] hidden sm:table-cell">
+              {row.email}
+            </td>
             <td className="p-1">
               <button
                 className="text-red-500 hover:text-red-700 bg-white p-2 rounded-2xl hover:shadow-md hover:bg-gray-200 transition-shadow"

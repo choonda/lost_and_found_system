@@ -133,12 +133,12 @@ const Filter: React.FC<FilterProps> = ({
           </Link>
         )}
         {isAdmin && (
-          <button className="flex flex-row gap-3 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer py-3 px-6">
+          <button
+            className="flex flex-row gap-3 items-center bg-buttongreen rounded-full hover:bg-[#006557] cursor-pointer py-3 px-6"
+            onClick={() => setIsQRopen(true)}
+          >
             <p className="text-white font-bold text-xl">QRScan</p>
-            <AiOutlineQrcode
-              className="text-white font-extrabold w-7 h-7"
-              onClick={() => setIsQRopen(true)}
-            />
+            <AiOutlineQrcode className="text-white font-extrabold w-7 h-7" />
           </button>
         )}
       </div>
