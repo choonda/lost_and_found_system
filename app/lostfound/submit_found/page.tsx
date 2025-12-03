@@ -26,6 +26,7 @@ const FoundPage = () => {
     handleSubmit,
     formState: { errors },
     watch,
+    reset, //reset for handling sensitive content 
   } = useForm({
     resolver: zodResolver(ItemCreateFormSchema),
   });
@@ -36,7 +37,7 @@ const FoundPage = () => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("location", data.location ?? "");
-    formData.append("description", data.description ?? "");
+    //formData.append("description", data.description ?? "");
     formData.append("date", data.date ? data.date.toISOString() : "");
     formData.append("type", "Found");
     formData.append("centerId", "1");
@@ -51,6 +52,30 @@ const FoundPage = () => {
       body: formData,
     });
 
+    // 👇 UPDATED RESPONSE HANDLING LOGIC
+    if (response.status === 403) {
+      const errorMessage = await response.text();
+      alert(`Submission Blocked: ${errorMessage} Please revise the Name and Location.`);
+      
+      // 1. Clear text/date fields using react-hook-form's reset
+      reset({
+        name: "",
+        location: "",
+        date: "",
+        // Note: You generally don't reset the file input using react-hook-form's reset
+      }, {
+        keepErrors: true, // Keep validation errors if they exist
+        keepDirty: false,
+        keepTouched: false,
+        keepValues: false
+      });
+
+      // 2. Clear the photo preview state separately
+      setPhotoPreview(null);
+      
+      return; // Stop execution here
+    }
+    
     if (response?.status !== 200) {
       alert("Failed to submit the form. Please try again.");
       return;
@@ -112,13 +137,13 @@ const FoundPage = () => {
               </p>
             )}
           </div>
-          <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
+          {/* <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
             <InputField
               label="Description"
               placeholder="description"
               {...register("description")}
             />
-          </div>
+          </div> */}
         </div>
         <div className="bg-white p-4 items-center rounded-xl">
           <label

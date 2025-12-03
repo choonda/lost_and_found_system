@@ -14,7 +14,7 @@ export async function imageUrlToBase64(url: string): Promise<string> {
 // Generates a text description from an image 
 export async function describeImage(base64Image: string): Promise<string> {
   const model = 'gemini-2.5-flash';
-  const prompt = "Describe this lost/found item in detail. Mention color, brand, distinct features, and type. Keep it under 50 words.";
+  const prompt = "Generate a highly detailed, objective description of the image content. The description must cover all of the following attributes for the main subject(s): Object Type, Dominant Color(s), Shape/Form, Surface Pattern/Texture, and Distinct Feature(s). The entire output must not exceed  words.";
   
   const contents = [
     {
@@ -67,22 +67,30 @@ export async function findSimilarItemsByImage(base64Image: string) {
   const vector = await generateEmbedding(description);
   const vectorString = `[${vector.join(",")}]`;
   
-  const items = await prisma.$queryRaw`
+  const items = await prisma.$queryRaw<any[]>`
     SELECT id, name, description, "imageUrl", 
     1 - (embedding <=> ${vectorString}::vector) as similarity
     FROM item
-    WHERE embedding IS NOT NULL
+    WHERE embedding IS NOT NULL AND
+      (1 - (embedding <=> ${vectorString}::vector)) * 100 > 85
     ORDER BY similarity DESC
     LIMIT 5;
   `;
+
+  const formattedItems = items.map((item) => ({
+    id: item.id,
+    name: item.name,
+    description: item.description,
+    // 👇 The Fix: Checking both cases
+    imageUrl: item.imageUrl || item.imageurl || null, 
+    similarity: item.similarity
+  }));
 
   return { description, similarItems: items };
 }
 
 //sensesitive content filter
-export async function filterSensitiveContent(userQuery: string): Promise<boolean> {
-  const vector = await generateEmbedding(userQuery);
-  const vectorString = `[${vector.join(",")}]`;
+export async function filterSensitiveContent(userQuery: string) {
 
   const model = 'gemini-2.5-flash';
   const prompt = `
@@ -118,6 +126,7 @@ export async function chatWithAI(userQuery: string) {
     SELECT id, name, description, location, date
     FROM item
     WHERE embedding IS NOT NULL
+      AND (1 - (embedding <=> ${vectorString}::vector)) * 100 > 85
     ORDER BY embedding <=> ${vectorString}::vector
     LIMIT 5;
   `;

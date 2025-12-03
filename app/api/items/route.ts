@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { Item, Prisma } from "@prisma/client";
-import { describeImage, generateEmbedding, imageUrlToBase64, findSimilarItemsByImage } from "@/lib/gemini";
+import { describeImage, generateEmbedding, imageUrlToBase64, filterSensitiveContent, findSimilarItemsByImage } from "@/lib/gemini";
 
 import { uploadFile } from "@/lib/actions/uploadUtils";
 
@@ -18,6 +18,8 @@ export async function POST(req: Request) {
 
   const photo = formData.get("photo");
 
+  const forceCreate = formData.get("forceCreate") === "true";
+
   let imageUrl = "";
 
   try {
@@ -28,11 +30,37 @@ export async function POST(req: Request) {
     return new Response("Failed to upload item photo", { status: 500 });
   }
 
+  const imageUrlForDesc = imageUrl;
+  const Base64ForDesc = await imageUrlToBase64(imageUrlForDesc!);
+  const imageDesc = await describeImage(Base64ForDesc);
+
+  const similarBase64 = await imageUrlToBase64(imageUrl!);
+  const similarData = await findSimilarItemsByImage(similarBase64);
+
+  if (!similarData) {
+    return new Response("Error processing AI image detection", { status: 500 });
+  }
+
+  const { description: Desc, similarItems } = similarData;
+
+  if (similarData && formData.get("type") === "Found") {
+    return new Response(
+      JSON.stringify({
+        message: "Similar items found.",
+        similarItems: similarItems,
+        tempImageUrl: imageUrl,
+      }),
+      { status: 200 }
+    );
+  }
+
+  console.log("Skipping similarity check, proceeding to create item.");
+
   const body: {
     type: "Lost" | "Found";
     name: string;
     location?: string;
-    description?: string; //maybe can save & dont need user input
+    description?: string;
     date?: string;
     centerId?: string;
     imageUrl?: string;
@@ -40,7 +68,7 @@ export async function POST(req: Request) {
     type: formData.get("type") as "Lost" | "Found",
     name: formData.get("name") as string,
     location: formData.get("location") as string | undefined,
-    description: formData.get("description") as string | undefined,
+    description: imageDesc as string | undefined,
     date: formData.get("date") as string | undefined,
     centerId: formData.get("centerId") as string | undefined,
     imageUrl: imageUrl,
@@ -48,6 +76,17 @@ export async function POST(req: Request) {
 
   if (body.type !== "Lost" && body.type !== "Found") {
     return new Response("Invalid item type", { status: 400 });
+  }
+
+  const contentForFilter = `${body.name} ${body.location} ${body.description}`;
+  const isSensitive = await filterSensitiveContent(contentForFilter);
+
+  console.log("Content Sensitivity Check:", isSensitive);
+  console.log("Content Checked:", contentForFilter);
+
+  if (isSensitive) {
+    console.warn("Item creation blocked due to sensitive content in: name, location, or image description.");
+    return new Response("Item content is flagged as sensitive. Please revise.", { status: 403 });
   }
 
   const itemData: Prisma.ItemCreateInput = {
