@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -12,6 +12,7 @@ export async function GET(req: Request) {
   }
   const body = await req.json();
   const { userId, itemId, centerId } = body;
+  console.log("Body received:", { userId, itemId, centerId });
 
   if (!userId || !centerId || !itemId) {
     return new Response("Missing field required", { status: 400 });

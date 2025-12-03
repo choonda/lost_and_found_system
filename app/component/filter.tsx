@@ -144,7 +144,7 @@ const Filter: React.FC<FilterProps> = ({
       </div>
       {isQRopen && (
         <div>
-          <QRScanner centerId="2" onClose={() => setIsQRopen(false)} />
+          <QRScanner centerId={2} onClose={() => setIsQRopen(false)} />
         </div>
       )}
     </div>
