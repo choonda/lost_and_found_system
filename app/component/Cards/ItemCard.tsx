@@ -31,8 +31,8 @@ const useIsAdmin = () => {
 type ItemCardProps = {
   id: string;
   userId: string;
-
   type: string;
+  status: "CLAIMED" | "LOOKING" | "FOUND";
   name: string;
   itemName: string;
   location: string;
@@ -44,8 +44,8 @@ type ItemCardProps = {
 const ItemCard = ({
   id,
   userId,
-
   type,
+  status,
   name,
   itemName,
   location,
@@ -59,7 +59,11 @@ const ItemCard = ({
 
   return (
     <>
-      <div className="w-full sm:w-[31%] h-fit bg-[#EBECF1] rounded-lg shadow-md">
+      <div
+        className={`w-full sm:w-[31%] h-fit bg-[#EBECF1] rounded-lg shadow-md ${
+          status === "CLAIMED" ? "ring-4 ring-green-500" : ""
+        }`}
+      >
         {/* UPPER */}
 
         <div className="relative" onClick={() => setOpenItem(true)}>
