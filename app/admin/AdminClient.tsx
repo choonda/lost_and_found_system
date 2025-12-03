@@ -13,8 +13,6 @@ export default function AdminClient() {
   >([]);
   const [lostData, setLostData] = useState<ChartDataItem[]>([]);
   const [foundData, setFoundData] = useState<ChartDataItem[]>([]);
-  const [totalLost, setTotalLost] = useState<number>(0);
-  const [totalFound, setTotalFound] = useState<number>(0);
 
   // Fetch users
   useEffect(() => {
@@ -36,8 +34,6 @@ export default function AdminClient() {
         if (!data) return;
         setLostData(data.lost ?? []);
         setFoundData(data.found ?? []);
-        setTotalLost(data.totalLost ?? 0);
-        setTotalFound(data.totalFound ?? 0);
       })
       .catch((err) => console.error("Failed to fetch admin stats:", err));
   }, []);
@@ -72,18 +68,10 @@ export default function AdminClient() {
 
       <div className="flex flex-1 gap-4 px-4 min-h-[300px]">
         <div className="bg-[#FAFCFD] rounded-2xl flex-1 ">
-          <OverviewChart
-            title="Lost Overview"
-            data={lostData}
-            totalCount={totalLost}
-          />
+          <OverviewChart title="Lost Overview" data={lostData} />
         </div>
         <div className="bg-[#FAFCFD] rounded-2xl flex-1">
-          <OverviewChart
-            title="Found Overview"
-            data={foundData}
-            totalCount={totalFound}
-          />
+          <OverviewChart title="Found Overview" data={foundData} />
         </div>
       </div>
 

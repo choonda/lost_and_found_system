@@ -14,7 +14,6 @@ type OverviewChartProps = {
   title: string;
   data: ChartDataItem[];
   isAnimationActive?: boolean;
-  totalCount: number;
 };
 const OverviewChart = ({
   title,
