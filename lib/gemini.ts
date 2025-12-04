@@ -47,6 +47,8 @@ export async function describeImage(base64Image: string): Promise<string> {
     contents: contents,
   });
 
+  console.log("describeImage result:", result);
+
   // The GenAI client may expose text in different fields; prefer `text`, fall back to others.
   const text =
     (result as any).text ||
