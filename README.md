@@ -19,3 +19,4 @@ Key features include:
 AI Features
 - Image similarity to match “lost” and “found” items
 - AI-assisted description suggestions (optional)
+- AI sensitive detection barrier

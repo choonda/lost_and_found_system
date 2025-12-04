@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import React, { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, Resolver } from "react-hook-form";
 
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { RiFolderUploadLine } from "react-icons/ri";
@@ -19,9 +19,11 @@ import FindSimilarModal from "@/app/component/FindSimilarModal";
 
 const LostPage = () => {
   type FormValues = z.infer<typeof ItemCreateFormSchema>;
+
   const router = useRouter();
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Re-added similarity states
   const [similarItems, setSimilarItems] = useState<any[]>([]);
   const [isCheckingImage, setIsCheckingImage] = useState(false);
   const [sensitiveError, setSensitiveError] = useState<string | null>(null);
@@ -35,14 +37,104 @@ const LostPage = () => {
     watch,
     reset,
     setValue,
-  } = useForm({
-    resolver: zodResolver(ItemCreateFormSchema),
+  } = useForm<FormValues>({
+    resolver: zodResolver(
+      ItemCreateFormSchema
+    ) as unknown as Resolver<FormValues>,
   });
 
   useEffect(() => {
     setIsSubmitting(formIsSubmitting);
   }, [formIsSubmitting]);
 
+  const watchPhoto = watch("photo");
+
+  // 1️⃣ Watch for photo upload, call similarity API, and get AI description
+  useEffect(() => {
+    const file = watchPhoto?.[0];
+    if (!file) {
+      setPhotoPreview(null);
+      setSimilarItems([]);
+      setValue("description", "");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64 = reader.result?.toString();
+      if (!base64) return;
+
+      setPhotoPreview(base64);
+      setIsCheckingImage(true);
+      try {
+        const res = await fetch("/api/ai/similarity", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(base64),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const items = data.similarItems || [];
+          setSimilarItems(items);
+          
+          // If AI returned a description, populate the description field
+          if (data.aiDescription) {
+            setValue("description", data.aiDescription);
+          }
+          // If similar items found, open the modal to show them
+          if (items.length > 0) {
+            setIsOpenModal(true);
+          }
+        } else {
+          console.error("Image similarity API error");
+        }
+      } catch (err) {
+        console.error("Failed to fetch similar items/description", err);
+      } finally {
+        setIsCheckingImage(false);
+      }
+    };
+
+    reader.readAsDataURL(file);
+  }, [watchPhoto, setValue]);
+
+  // helper to actually submit the FormValues to the API
+  const submitFormData = async (data: FormValues | null) => {
+    if (!data) return;
+    setIsSubmitting(true);
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("location", data.location ?? "");
+    formData.append("date", data.date ? data.date.toISOString() : "");
+    // Note: Type is "Lost" for this page
+    formData.append("type", "Lost"); 
+    formData.append("centerId", "1");
+    formData.append("description", data.description ?? "");
+    if (data.photo && data.photo[0]) formData.append("photo", data.photo[0]);
+
+    try {
+      const response = await fetch("/api/items", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.status !== 200) {
+        alert("Failed to submit the form. Please try again.");
+        return;
+      }
+
+      alert("Form submitted successfully!");
+      router.push("/home");
+    } catch (err) {
+      console.error(err);
+      alert("Error submitting form. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // 2️⃣ Form submit handler
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setSensitiveError(null);
 
@@ -51,17 +143,17 @@ const LostPage = () => {
       const res = await fetch("/api/ai/sensitive-filter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userQuery: `${data.name} ${data.location}` }),
+        body: JSON.stringify({ userQuery: `${data.name} ${data.location} ${data.description}` }),
       });
       const result = await res.json();
 
       if (result.isSensitive) {
         setSensitiveError(
-          "Submission blocked: Name or Location contains sensitive content"
+          "Submission blocked: Name or Location or Image contains sensitive content"
         );
         // clear fields so user must re-enter
         reset(
-          { name: "", location: "", date: "", description: "" },
+          { name: "", location: "", date: undefined, description: "" },
           { keepErrors: false, keepDirty: false }
         );
         setPhotoPreview(null);
@@ -85,111 +177,17 @@ const LostPage = () => {
     await submitFormData(data);
   };
 
-  const watchPhoto = watch("photo");
-  useEffect(() => {
-    if (watchPhoto && watchPhoto[0]) {
-      const file = watchPhoto[0];
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64 = reader.result?.toString();
-        if (!base64) return;
-        setPhotoPreview(base64);
-        setIsCheckingImage(true);
-        try {
-          const res = await fetch("/api/ai/similarity", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(base64),
-          });
-          if (res.ok) {
-            const data = await res.json();
-            const items = data.similarItems || [];
-            setSimilarItems(items);
-            if (data.aiDescription) setValue("description", data.aiDescription);
-            if (items.length > 0) setIsOpenModal(true);
-          } else {
-            let bodyText = "";
-            try {
-              bodyText = await res.text();
-              try {
-                const parsed = JSON.parse(bodyText);
-                bodyText = parsed.error || JSON.stringify(parsed);
-              } catch (e) {}
-            } catch (e) {
-              bodyText = String(e);
-            }
-            console.error("Image similarity API error:", res.status, bodyText);
-          }
-        } catch (err) {
-          console.error("Failed to fetch similarity/description", err);
-        } finally {
-          setIsCheckingImage(false);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  }, [watchPhoto]);
-
-  const submitFormData = async (data: FormValues | null) => {
-    if (!data) return;
-    setIsSubmitting(true);
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("location", data.location ?? "");
-    formData.append("date", data.date ? data.date.toISOString() : "");
-    formData.append("description", data.description ?? "");
-    formData.append("type", "Lost");
-    formData.append("centerId", "1");
-    if (data.photo && data.photo[0]) formData.append("photo", data.photo[0]);
-
-    try {
-      const response = await fetch("/api/items", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.status === 403) {
-        const errorMessage = await response.text();
-        alert(
-          `Submission Blocked: ${errorMessage} Please revise the Name and Location.`
-        );
-        reset(
-          { name: "", location: "", date: "" },
-          {
-            keepErrors: true,
-            keepDirty: false,
-            keepTouched: false,
-            keepValues: false,
-          }
-        );
-        setPhotoPreview(null);
-        return;
-      }
-
-      if (response?.status !== 200) {
-        alert("Failed to submit the form. Please try again.");
-        return;
-      }
-
-      alert("Form submitted successfully!");
-      router.push("/home");
-    } catch (err) {
-      console.error(err);
-      alert("Error submitting form. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="min-h-screen min-w-screen bg-lightgreen px-8 py-4 flex flex-col items-center gap-4">
+        {/* Header */}
         <div className="flex flex-row p-4 w-full items-center gap-4">
           <Link href="/lostfound">
             <AiOutlineArrowLeft className="text-[#969DA3] w-8 h-8 font-semibold cursor-pointer" />
           </Link>
           <h1 className="text-2xl text-[#969DA3]">LOST</h1>
         </div>
+
         {/* Form Fields */}
         <div className="border-2 border-dashed border-[#B8B8B8] p-4 w-full h-fit rounded-md gap-2 flex flex-col">
           <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
@@ -208,7 +206,7 @@ const LostPage = () => {
               error={errors.location?.message}
             />
           </div>
-          <div className="bg-white w-full h-fit p-4 rounded-md ">
+          <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
             <label className="text-md font-bold text-[#969DA3]">Date</label>
             <input
               className="w-full flex px-4 py-2 rounded-md bg-[#E6F6F4] focus:outline-none focus:ring-2 focus:ring-[#b0e4dd]"
@@ -221,21 +219,6 @@ const LostPage = () => {
               </p>
             )}
           </div>
-          <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
-            <InputField
-              label="Description"
-              placeholder="Auto-generated description or enter your own"
-              {...register("description")}
-              error={errors.description?.message as string}
-            />
-          </div>
-          {/* <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
-            <InputField
-              label="Description"
-              placeholder="description"
-              {...register("description")}
-            />
-          </div> */}
         </div>
 
         {/* Photo Upload */}
@@ -254,8 +237,8 @@ const LostPage = () => {
                   src={photoPreview}
                   alt="preview"
                   className="w-full h-64 object-cover rounded-md border"
-                  width={400}
-                  height={400}
+                  width={40}
+                  height={40}
                 />
                 <button
                   type="button"
@@ -263,6 +246,9 @@ const LostPage = () => {
                     e.stopPropagation();
                     setPhotoPreview(null);
                     setSimilarItems([]);
+                    // Manually clear photo and description
+                    setValue("photo", null as any);
+                    setValue("description", "");
                   }}
                   className="absolute top-2 left-2 bg-lightgreen text-[#969DA3] rounded-full p-1 shadow-lg"
                 >
@@ -292,7 +278,7 @@ const LostPage = () => {
               <div className="bg-white bg-opacity-95 rounded-md p-4 shadow-lg">
                 <p className="text-gray-700 text-center">
                   {isSubmitting
-                    ? "Loading..."
+                    ? "Submitting..."
                     : "AI is finding similar items..."}
                 </p>
               </div>
@@ -311,8 +297,8 @@ const LostPage = () => {
           )}
         </div>
         <div
-          className={`w-fit h-fit px-8 py-4 bg-buttongreen rounded-full  ${
-            isSubmitting
+          className={`w-fit h-fit px-8 py-4 bg-buttongreen rounded-full ${
+            isSubmitting || isCheckingImage
               ? "bg-gray-300"
               : "cursor-pointer hover:bg-[#006557] bg-buttongreen "
           }`}
@@ -320,7 +306,7 @@ const LostPage = () => {
           <button
             className="cursor-pointer"
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isCheckingImage}
           >
             {isSubmitting ? (
               <p className="text-white text-md">Submitting...</p>
@@ -335,7 +321,6 @@ const LostPage = () => {
           <p className="text-red-600 mt-2">{sensitiveError}</p>
         )}
       </div>
-
       {isOpenModal && (
         <FindSimilarModal
           isOpen={isOpenModal}

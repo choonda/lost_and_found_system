@@ -47,18 +47,18 @@ export async function POST(req: Request) {
     return new Response("Error processing AI image detection", { status: 500 });
   }
 
-  const { description: Desc, similarItems } = similarData;
+  // const { description: Desc, similarItems } = similarData;
 
-  if (similarData && formData.get("type") === "Found") {
-    return new Response(
-      JSON.stringify({
-        message: "Similar items found.",
-        similarItems: similarItems,
-        tempImageUrl: imageUrl,
-      }),
-      { status: 200 }
-    );
-  }
+  // if (similarData && formData.get("type") === "Found") {
+  //   return new Response(
+  //     JSON.stringify({
+  //       message: "Similar items found.",
+  //       similarItems: similarItems,
+  //       tempImageUrl: imageUrl,
+  //     }),   
+  //     { status: 200 }
+  //   );
+  // }
 
   console.log("Skipping similarity check, proceeding to create item.");
 
