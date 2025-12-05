@@ -77,7 +77,7 @@ const LostPage = () => {
           const data = await res.json();
           const items = data.similarItems || [];
           setSimilarItems(items);
-          
+
           // If AI returned a description, populate the description field
           if (data.aiDescription) {
             setValue("description", data.aiDescription);
@@ -108,7 +108,7 @@ const LostPage = () => {
     formData.append("location", data.location ?? "");
     formData.append("date", data.date ? data.date.toISOString() : "");
     // Note: Type is "Lost" for this page
-    formData.append("type", "Lost"); 
+    formData.append("type", "Lost");
     formData.append("centerId", "1");
     formData.append("description", data.description ?? "");
     if (data.photo && data.photo[0]) formData.append("photo", data.photo[0]);
@@ -143,7 +143,9 @@ const LostPage = () => {
       const res = await fetch("/api/ai/sensitive-filter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userQuery: `${data.name} ${data.location} ${data.description}` }),
+        body: JSON.stringify({
+          userQuery: `${data.name} ${data.location} ${data.description}`,
+        }),
       });
       const result = await res.json();
 
@@ -209,7 +211,7 @@ const LostPage = () => {
           <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
             <label className="text-md font-bold text-[#969DA3]">Date</label>
             <input
-              className="w-full flex px-4 py-2 rounded-md bg-[#E6F6F4] focus:outline-none focus:ring-2 focus:ring-[#b0e4dd] dark:text-black bg-black "
+              className="w-full flex px-4 py-2 rounded-md bg-[#E6F6F4] focus:outline-none focus:ring-2 focus:ring-[#b0e4dd] dark:text-black "
               type="date"
               {...register("date")}
             />

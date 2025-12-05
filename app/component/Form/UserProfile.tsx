@@ -75,13 +75,13 @@ export default function UserProfile({
         <input
           type="text"
           value={username}
-          className="placeholder-text-black placeholder-font-light bg-[#E6F6F4] p-3 rounded-md outline-none"
+          className="placeholder-text-black placeholder-font-light bg-[#E6F6F4] p-3 rounded-md outline-none dark:text-black"
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
 
       {/* Email - READ ONLY */}
-      <div className="bg-white px-6 py-4 rounded-md flex flex-col gap-2 w-full">
+      <div className="bg-white px-6 py-4 rounded-md flex flex-col gap-2 w-full dark:text-black">
         <label className="text-[#969DA3] font-bold">Email</label>
         <input
           type="text"

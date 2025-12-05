@@ -23,8 +23,8 @@ const page = () => {
         </Link>
       </div>
       <Link href="/home">
-        <div className="p-8 bg-white rounded-full">
-          <AiOutlineClose className="text-5xl font-bold" />
+        <div className="p-8 bg-white rounded-full ">
+          <AiOutlineClose className="text-5xl font-bold text-black" />
         </div>
       </Link>
     </div>

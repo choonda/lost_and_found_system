@@ -15,9 +15,9 @@ const Table = ({ data, onDelete }: TableProps) => {
     <table className="w-full">
       <thead className=" py-2 text-left">
         <tr className="">
-          <th className="p-1">Name</th>
-          <th className="p-1 hidden sm:table-cell">Email</th>
-          <th className="p-1">Action</th>
+          <th className="p-1 text-black">Name</th>
+          <th className="p-1 hidden sm:table-cell text-black">Email</th>
+          <th className="p-1 text-black">Action</th>
         </tr>
       </thead>
       <tbody className="">

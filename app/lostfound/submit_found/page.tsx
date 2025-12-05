@@ -24,7 +24,7 @@ const FoundPage = () => {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   // Re-added isCheckingImage state to show loading while AI generates description
-  const [isCheckingImage, setIsCheckingImage] = useState(false); 
+  const [isCheckingImage, setIsCheckingImage] = useState(false);
   const [sensitiveError, setSensitiveError] = useState<string | null>(null);
   // Similar items/Modal states are correctly removed
 
@@ -53,7 +53,7 @@ const FoundPage = () => {
     if (!file) {
       setPhotoPreview(null);
       // Clear description when photo is removed
-      setValue("description", ""); 
+      setValue("description", "");
       return;
     }
 
@@ -64,7 +64,7 @@ const FoundPage = () => {
 
       setPhotoPreview(base64);
       setIsCheckingImage(true);
-      
+
       // Keep the original API call to fetch image data/description
       try {
         const res = await fetch("/api/ai/similarity", {
@@ -75,7 +75,7 @@ const FoundPage = () => {
 
         if (res.ok) {
           const data = await res.json();
-              
+
           if (data.aiDescription) {
             setValue("description", data.aiDescription);
           }
@@ -134,7 +134,9 @@ const FoundPage = () => {
       const res = await fetch("/api/ai/sensitive-filter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userQuery: `${data.name} ${data.location} ${data.description}` }),
+        body: JSON.stringify({
+          userQuery: `${data.name} ${data.location} ${data.description}`,
+        }),
       });
       const result = await res.json();
 
@@ -192,7 +194,7 @@ const FoundPage = () => {
           <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
             <label className="text-md font-bold text-[#969DA3]">Date</label>
             <input
-              className="w-full flex px-4 py-2 rounded-md bg-[#E6F6F4] focus:outline-none focus:ring-2 focus:ring-[#b0e4dd]"
+              className="w-full flex px-4 py-2 rounded-md bg-[#E6F6F4] focus:outline-none focus:ring-2 focus:ring-[#b0e4dd] dark:text-black"
               type="date"
               {...register("date")}
             />

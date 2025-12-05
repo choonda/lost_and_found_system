@@ -5,21 +5,21 @@ import React, { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { VscAccount } from "react-icons/vsc";
 
-interface User{
+interface User {
   image?: string;
 }
 
 const Header = ({ onSearch }: { onSearch: (v: string) => void }) => {
-  const [user,setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     let mounted = true;
 
     fetch("/api/user/me")
-    .then((res) => res.ok ? res.json() : null)
-    .then((data) => {
-      if (mounted && data) setUser(data);
-    });
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (mounted && data) setUser(data);
+      });
 
     return () => {
       mounted = false;
@@ -54,7 +54,7 @@ const Header = ({ onSearch }: { onSearch: (v: string) => void }) => {
           <div className="flex items-center w-full bg-white rounded-full pl-4 shadow-md border-primarygreen border-2">
             <AiOutlineSearch className="w-8 h-8 text-primarygreen flex-none" />
             <input
-              className="flex-1 min-w-0 focus:outline-none placeholder-gray-400 text-base"
+              className="flex-1 min-w-0 focus:outline-none placeholder-gray-400 text-base dark:text-black"
               type="text"
               placeholder="Find something..."
               onChange={(e) => {
@@ -71,10 +71,7 @@ const Header = ({ onSearch }: { onSearch: (v: string) => void }) => {
         <Link href="/profile" className="flex items-center gap-2 ">
           <button className="flex-none cursor-pointer">
             {user?.image ? (
-              <img
-                src={user.image}
-                className="w-10 h-10 rounded-full border"
-              />
+              <img src={user.image} className="w-10 h-10 rounded-full border" />
             ) : (
               <VscAccount className="w-10 h-10 text-primarygreen" />
             )}
