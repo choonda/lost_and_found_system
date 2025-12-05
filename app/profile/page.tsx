@@ -13,10 +13,10 @@ const ProfilePage = () => {
   const router = useRouter();
   const [user, setUser] = useState<any>();
 
-async function loadUser() {
+  async function loadUser() {
     const res = await fetch("/api/user/me");
     const data = await res.json();
-        console.log("user data:", data);
+    console.log("user data:", data);
     setUser(data);
   }
 
@@ -33,7 +33,7 @@ async function loadUser() {
     return (
       <div className="flex items-center justify-center h-screen">
         Loading...
-      </div>  
+      </div>
     );
 
   return (
@@ -42,7 +42,7 @@ async function loadUser() {
         <Link href="/home">
           <AiOutlineArrowLeft className="text-[#969DA3] w-7 h-7 sm:w-8 sm:h-8 font-semibold cursor-pointer" />
         </Link>
-        <h1 className="text-2xl sm:text-md text-[#969DA3] ml-28">PROFILE</h1>
+        <h1 className="text-2xl sm:text-md text-[#969DA3] sm:ml-28">PROFILE</h1>
         <div
           className="flex gap-2 items-center cursor-pointer "
           onClick={handleSignOut}
@@ -53,7 +53,6 @@ async function loadUser() {
       </div>
       <div className="flex flex-col gap-4 p-4">
         <div className="w-full items-center flex flex-col gap-4  ">
-          
           <div className="w-full">
             <UserProfile
               username={user.name}

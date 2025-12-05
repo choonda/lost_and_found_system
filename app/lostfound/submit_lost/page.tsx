@@ -211,7 +211,7 @@ const LostPage = () => {
           <div className="bg-white w-full h-fit p-4 rounded-md ">
             <label className="text-md font-bold text-[#969DA3]">Date</label>
             <input
-              className="w-full flex px-4 py-2 rounded-md bg-[#E6F6F4] focus:outline-none focus:ring-2 focus:ring-[#b0e4dd]"
+              className="w-full flex px-4 py-2 rounded-md bg-[#E6F6F4] focus:outline-none focus:ring-2 focus:ring-[#b0e4dd] dark:text-black bg-black "
               type="date"
               {...register("date")}
             />

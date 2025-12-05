@@ -18,7 +18,10 @@ export default function UserProfile({
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    console.log("USERPROFILE: initialUsername prop changed ->", initialUsername);
+    console.log(
+      "USERPROFILE: initialUsername prop changed ->",
+      initialUsername
+    );
     setUsername(initialUsername ?? "");
   }, [initialUsername]);
 
@@ -45,7 +48,6 @@ export default function UserProfile({
 
   return (
     <div className="items-center flex flex-col gap-6 w-full">
-
       {/* Upload Photo */}
       <label className="flex flex-col items-center cursor-pointer">
         <input
@@ -68,13 +70,12 @@ export default function UserProfile({
       </label>
 
       {/* Username */}
-      <div className="bg-white px-6 py-4 rounded-md flex flex-col gap-2 w-full">
-        <label className="text-[#969DA3] font-bold">Username</label>
+      <div className="bg-white px-6 py-4 rounded-md flex flex-col gap-2 w-full ">
+        <label className="text-black font-bold">Username</label>
         <input
           type="text"
           value={username}
-          
-          className="placeholder-text-[#808080] placeholder-font-light bg-[#E6F6F4] p-3 rounded-md outline-none"
+          className="placeholder-text-black placeholder-font-light bg-[#E6F6F4] p-3 rounded-md outline-none"
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
