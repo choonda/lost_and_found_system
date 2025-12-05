@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 
 import InputField from "@/app/component/Form/InputField";
-import FindSimilarModal from "@/app/component/FindSimilarModal";
+// FindSimilarModal import is correctly removed
 
 const FoundPage = () => {
   type FormValues = z.infer<typeof ItemCreateFormSchema>;
@@ -23,11 +23,10 @@ const FoundPage = () => {
   const router = useRouter();
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [similarItems, setSimilarItems] = useState<any[]>([]);
-  const [isCheckingImage, setIsCheckingImage] = useState(false);
+  // Re-added isCheckingImage state to show loading while AI generates description
+  const [isCheckingImage, setIsCheckingImage] = useState(false); 
   const [sensitiveError, setSensitiveError] = useState<string | null>(null);
-  const [isOpenModal, setIsOpenModal] = useState(false);
-  const [pendingData, setPendingData] = useState<FormValues | null>(null);
+  // Similar items/Modal states are correctly removed
 
   const {
     register,
@@ -41,18 +40,20 @@ const FoundPage = () => {
       ItemCreateFormSchema
     ) as unknown as Resolver<FormValues>,
   });
+
   useEffect(() => {
     setIsSubmitting(formIsSubmitting);
   }, [formIsSubmitting]);
 
   const watchPhoto = watch("photo");
 
-  // 1️⃣ Watch for photo upload and call similarity API
+  // 1️⃣ Watch for photo upload and call API for AI Description
   useEffect(() => {
     const file = watchPhoto?.[0];
     if (!file) {
       setPhotoPreview(null);
-      setSimilarItems([]);
+      // Clear description when photo is removed
+      setValue("description", ""); 
       return;
     }
 
@@ -63,6 +64,8 @@ const FoundPage = () => {
 
       setPhotoPreview(base64);
       setIsCheckingImage(true);
+      
+      // Keep the original API call to fetch image data/description
       try {
         const res = await fetch("/api/ai/similarity", {
           method: "POST",
@@ -72,75 +75,25 @@ const FoundPage = () => {
 
         if (res.ok) {
           const data = await res.json();
-          const items = data.similarItems || [];
-          setSimilarItems(items);
-          // If AI returned a description, populate the description field
+              
           if (data.aiDescription) {
             setValue("description", data.aiDescription);
           }
-          // If similar items found, open the modal to show them
-          if (items.length > 0) {
-            setIsOpenModal(true);
-          }
         } else {
-          console.error("Image similarity API error");
+          console.error("Image data API error");
         }
       } catch (err) {
-        console.error("Failed to fetch similar items", err);
+        console.error("Failed to fetch image data", err);
       } finally {
         setIsCheckingImage(false);
       }
     };
 
     reader.readAsDataURL(file);
-  }, [watchPhoto]);
-
-  // 2️⃣ Form submit handler
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    setSensitiveError(null);
-
-    // Check sensitive content using AI
-    try {
-      const res = await fetch("/api/ai/sensitive-filter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userQuery: `${data.name} ${data.location}` }),
-      });
-      const result = await res.json();
-
-      if (result.isSensitive) {
-        setSensitiveError(
-          "Submission blocked: Name or Location contains sensitive content"
-        );
-        // clear fields so user must re-enter
-        reset(
-          { name: "", location: "", date: undefined, description: "" },
-          { keepErrors: false, keepDirty: false }
-        );
-        setPhotoPreview(null);
-        setSimilarItems([]);
-        return;
-      }
-    } catch (err) {
-      console.error("Sensitive content check failed", err);
-      alert("Failed to verify sensitive content. Try again.");
-      return;
-    }
-
-    // Check similar items — if found, show modal and stash data so user can continue
-    if (similarItems.length > 0) {
-      setPendingData(data);
-      setIsOpenModal(true);
-      return;
-    }
-
-    // If no similar items, proceed with submission immediately
-    await submitFormData(data);
-  };
+  }, [watchPhoto, setValue]); // Added setValue to dependencies
 
   // helper to actually submit the FormValues to the API
-  const submitFormData = async (data: FormValues | null) => {
-    if (!data) return;
+  const submitFormData = async (data: FormValues) => {
     setIsSubmitting(true);
     const formData = new FormData();
     formData.append("name", data.name);
@@ -170,6 +123,41 @@ const FoundPage = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // 2️⃣ Form submit handler
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    setSensitiveError(null);
+
+    // Check sensitive content using AI
+    try {
+      const res = await fetch("/api/ai/sensitive-filter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userQuery: `${data.name} ${data.location} ${data.description}` }),
+      });
+      const result = await res.json();
+
+      if (result.isSensitive) {
+        setSensitiveError(
+          "Submission blocked: Name or Location or Image contains sensitive content"
+        );
+        // clear fields so user must re-enter
+        reset(
+          { name: "", location: "", date: undefined, description: "" },
+          { keepErrors: false, keepDirty: false }
+        );
+        setPhotoPreview(null);
+        return;
+      }
+    } catch (err) {
+      console.error("Sensitive content check failed", err);
+      alert("Failed to verify sensitive content. Try again.");
+      return;
+    }
+
+    // No similarity check/modal logic needed. Proceed with submission.
+    await submitFormData(data);
   };
 
   return (
@@ -214,14 +202,6 @@ const FoundPage = () => {
               </p>
             )}
           </div>
-          <div className="bg-white w-full h-fit p-4 rounded-md gap-4">
-            <InputField
-              label="Description"
-              placeholder="Auto-generated description or enter your own"
-              {...register("description")}
-              error={errors.description?.message as string}
-            />
-          </div>
         </div>
 
         {/* Photo Upload */}
@@ -248,7 +228,10 @@ const FoundPage = () => {
                   onClick={(e) => {
                     e.stopPropagation();
                     setPhotoPreview(null);
-                    setSimilarItems([]);
+                    // Manually clear the photo field value
+                    setValue("photo", null as any);
+                    // Clear description when photo is removed
+                    setValue("description", "");
                   }}
                   className="absolute top-2 left-2 bg-lightgreen text-[#969DA3] rounded-full p-1 shadow-lg"
                 >
@@ -278,35 +261,24 @@ const FoundPage = () => {
               <div className="bg-white bg-opacity-95 rounded-md p-4 shadow-lg">
                 <p className="text-gray-700 text-center">
                   {isSubmitting
-                    ? "Loading..."
-                    : "AI is finding similar items..."}
+                    ? "Submitting..."
+                    : "AI is generating description for image..."}
                 </p>
               </div>
             </div>
           )}
-
-          {similarItems.length > 0 && (
-            <div className="p-2 bg-yellow-100 rounded mt-2">
-              <h3 className="font-semibold text-sm">Similar items found:</h3>
-              <ul className="text-sm">
-                {similarItems.map((item: any) => (
-                  <li key={item.id}>{item.name}</li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
         <div
-          className={`w-fit h-fit px-8 py-4 bg-buttongreen rounded-full  ${
+          className={`w-fit h-fit px-8 py-4 bg-buttongreen rounded-full ${
             isSubmitting
               ? "bg-gray-300"
-              : "cursor-pointer hover:bg-[#006557] bg-buttongreen "
+              : "cursor-pointer hover:bg-[#006557] bg-buttongreen"
           }`}
         >
           <button
             className="cursor-pointer"
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isCheckingImage}
           >
             {isSubmitting ? (
               <p className="text-white text-md">Submitting...</p>
@@ -321,23 +293,6 @@ const FoundPage = () => {
           <p className="text-red-600 mt-2">{sensitiveError}</p>
         )}
       </div>
-      {isOpenModal && (
-        <FindSimilarModal
-          isOpen={isOpenModal}
-          items={similarItems}
-          onClose={async () => {
-            // user chose to continue anyway
-            setIsOpenModal(false);
-            await submitFormData(pendingData);
-            setPendingData(null);
-          }}
-          onCancel={() => {
-            // user chose to cancel/close modal and continue editing
-            setIsOpenModal(false);
-            setPendingData(null);
-          }}
-        />
-      )}
     </form>
   );
 };
